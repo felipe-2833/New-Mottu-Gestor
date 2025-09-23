@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="forest">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <title>EpicTask</title>
+</head>
+<body>
+
+<h1 class="text-2xl font-bold text-primary p-8">Mottu Gestor</h1>
+
+<main class="grid place-items-center gap-4 p-8">
+    <form class="w-full max-w-md" method="post">
+        <fieldset class="fieldset">
+            <legend class="fieldset-legend">Nome</legend>
+            <input name="title" type="text" class="input" placeholder="nome do patio" />
+            <p class="label">campo obrigatório</p>
+        </fieldset>
+
+        <fieldset class="fieldset">
+            <legend class="fieldset-legend">Endereço</legend>
+            <input name="title" type="text" class="input" placeholder="Endereço do patio" />
+            <p class="label">campo obrigatório</p>
+        </fieldset>
+
+        <fieldset class="fieldset">
+            <legend class="fieldset-legend">Capacidade</legend>
+            <input name="score" id="score-range" type="range" min="0" max="1000" value="40" class="range range-primary" />
+            <p id="score-label" class="label">100</p>
+        </fieldset>
+
+        <div class="space-x-4">
+            <a href="/patio" class="btn btn-neutral">Cancelar</a>
+            <button class="btn btn-primary">Salvar</button>
+        </div>
+
+    </form>
+</main>
+
+<script>
+    document.querySelector("#score-range").addEventListener("input", e => {
+        document.querySelector("#score-label").textContent = e.target.value
+    })
+</script>
+
+</body>
+</html>

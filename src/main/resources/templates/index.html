@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="forest">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <title>MottuGestor</title>
+</head>
+<body>
+
+<h1 class="text-2xl font-bold text-primary p-8">Mottu Gestor</h1>
+
+<a href="/patio/form-patio" class="btn btn-primary">Novo Patio</a>
+
+<div th:if="${message}" role="alert" class="alert alert-success alert-soft m-4">
+    <span th:text="${message}"></span>
+</div>
+
+<main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-4 p-8">
+    <div th:each="patio : ${patios}" class="card card-border bg-base-300 w-96">
+        <div th:text="${patio.nome + ' pts'}" class="badge badge-accent m-4"></div>
+
+        <div class="card-body items-center">
+            <h2 th:text="${patio.endereco}" class="card-title"></h2>
+            <div th:text="${patio.capacidade}"
+                 class="radial-progress bg-secondary text-secondary-content border-secondary border-4"
+                 th:style="${'--value:' + patio.capacidade}" th:aria-valuenow="${patio.capacidade}" role="progressbar">
+            </div>
+        </div>
+
+        <div class="card-actions justify-end m-4">
+            <button class="btn btn-primary">apagar</button>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
