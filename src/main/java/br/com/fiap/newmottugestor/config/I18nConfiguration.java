@@ -13,7 +13,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.util.Locale;
 
 @Configuration
-public class I18nConfiguration {
+public class I18nConfiguration implements WebMvcConfigurer{
     @Bean
     MessageSource messageSource(){
         var messageSource = new ResourceBundleMessageSource();

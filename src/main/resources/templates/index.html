@@ -9,9 +9,26 @@
 </head>
 <body>
 
-<h1 class="text-2xl font-bold text-primary p-8">Mottu Gestor</h1>
+<nav class="navbar bg-base-300 shadow-sm">
+    <div class="flex-1">
+        <a class="btn btn-ghost text-xl">Mottu Gestor</a>
+    </div>
+    <div class="flex-none">
+        <ul class="menu menu-horizontal px-1">
+            <li>
+                <details>
+                    <summary>🌎</summary>
+                    <ul class="bg-base-100 rounded-t-none p-2">
+                        <li><a>🇧🇷</a></li>
+                        <li><a>🏴󠁧󠁢󠁥󠁮󠁧󠁿</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
 
-<a href="/patio/form-patio" class="btn btn-primary">Novo Patio</a>
+<a href="/patio/form-patio" class="btn btn-primary " th:text="#{patio.new}"></a>
 
 <div th:if="${message}" role="alert" class="alert alert-success alert-soft m-4">
     <span th:text="${message}"></span>
@@ -30,7 +47,7 @@
         </div>
 
         <div class="card-actions justify-end m-4">
-            <button class="btn btn-primary">apagar</button>
+            <button class="btn btn-primary" th:text="#{delete}"></button>
         </div>
     </div>
 </main>

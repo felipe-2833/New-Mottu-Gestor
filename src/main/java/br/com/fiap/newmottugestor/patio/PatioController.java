@@ -28,7 +28,8 @@ public class PatioController {
     }
 
     @GetMapping("/form-patio")
-    public String form(){
+    public String form(Model model){
+        model.addAttribute("patio", new Patio());
         return "form-patio";
     }
 
