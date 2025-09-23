@@ -1,5 +1,7 @@
 package br.com.fiap.newmottugestor.patio;
 
+import br.com.fiap.newmottugestor.config.MessageHelper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,9 +10,11 @@ import java.util.List;
 public class PatioService {
 
     private final  PatioRepository patioRepository;
+    private final MessageHelper messageHelper;
 
-    public PatioService(PatioRepository patioRepository) {
+    public PatioService(PatioRepository patioRepository, MessageHelper messageHelper) {
         this.patioRepository = patioRepository;
+        this.messageHelper = messageHelper;
     }
 
     public List<Patio> getAllPatio() {
@@ -19,5 +23,15 @@ public class PatioService {
 
     public Patio save(Patio patio) {
         return patioRepository.save(patio);
+    }
+
+    public void deleteById(Long id) {
+        patioRepository.delete(getPatio(id));
+    }
+
+    public Patio getPatio(Long id) {
+        return patioRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(messageHelper.get("patio.notfound"))
+        );
     }
 }

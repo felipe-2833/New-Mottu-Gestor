@@ -21,6 +21,7 @@
                     <ul class="bg-base-100 rounded-t-none p-2">
                         <li><a href="?lang=pt_BR">🇧🇷</a></li>
                         <li><a href="?lang=en_US">🏴󠁧󠁢󠁥󠁮󠁧󠁿</a></li>
+                        <li><a href="/logout">Logout</a></li>
                     </ul>
                 </details>
             </li>
@@ -29,37 +30,73 @@
 </nav>
 
 <main class="grid place-items-center gap-4 p-8">
-    <form class="w-full max-w-md" method="post" th:object="${patio}">
-        <fieldset class="fieldset">
-            <legend class="fieldset-legend"th:text="#{name}"></legend>
-            <input th:field="*{nome}" th:errorclass="input-error" type="text" class="input" />
-            <p class="label text-error" th:errors="*{nome}"></p>
-        </fieldset>
+    <div class="w-full max-w-md">
+        <form th:if="${patio.id_patio == null}" th:object="${patio}" th:action="@{/patio/form-patio}" method="post">
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend"th:text="#{name}"></legend>
+                <input th:field="*{nome}" th:errorclass="input-error" type="text" class="input" />
+                <p class="label text-error" th:errors="*{nome}"></p>
+            </fieldset>
 
-        <fieldset class="fieldset">
-            <legend class="fieldset-legend" th:text="#{adress}"></legend>
-            <input th:field="*{endereco}" th:errorclass="input-error" type="text" class="input" />
-            <p class="label text-error" th:errors="*{endereco}"></p>
-        </fieldset>
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend" th:text="#{adress}"></legend>
+                <input th:field="*{endereco}" th:errorclass="input-error" type="text" class="input" />
+                <p class="label text-error" th:errors="*{endereco}"></p>
+            </fieldset>
 
-        <fieldset class="fieldset">
-            <legend class="fieldset-legend" th:text="#{capacity}"></legend>
-            <input th:field="*{capacidade}" id="score-range" type="range" min="0" max="1000" value="40" class="range range-primary" />
-            <p id="score-label" class="label"  th:text="*{capacidade}"></p>
-        </fieldset>
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend" th:text="#{capacity}"></legend>
+                <input th:field="*{capacidade}" id="score-range" type="range" min="0" max="1000" value="40" class="range range-primary" />
+                <p id="score-label" class="label"  th:text="*{capacidade}"></p>
+            </fieldset>
 
-        <div class="space-x-4">
-            <a href="/patio" class="btn btn-neutral" th:text="#{cancel}"></a>
-            <button class="btn btn-primary"  th:text="#{save}"></button>
-        </div>
+            <div class="space-x-4">
+                <a href="/patio" class="btn btn-neutral" th:text="#{cancel}"></a>
+                <button class="btn btn-primary"  th:text="#{save}"></button>
+            </div>
 
-    </form>
+        </form>
+        <form th:if="${patio.id_patio != null}" th:object="${patio}" th:action="@{/patio/{id}(id=${patio.id_patio})}" method="post">
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend"th:text="#{name}"></legend>
+                <input th:field="*{nome}" th:errorclass="input-error" type="text" class="input" />
+                <p class="label text-error" th:errors="*{nome}"></p>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend" th:text="#{adress}"></legend>
+                <input th:field="*{endereco}" th:errorclass="input-error" type="text" class="input" />
+                <p class="label text-error" th:errors="*{endereco}"></p>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend" th:text="#{capacity}"></legend>
+                <input th:field="*{capacidade}" id="score-range2" type="range" min="0" max="1000" value="40" class="range range-primary" />
+                <p id="score-label2" class="label"  th:text="*{capacidade}"></p>
+            </fieldset>
+
+            <div class="space-x-4">
+                <a href="/patio" class="btn btn-neutral" th:text="#{cancel}"></a>
+                <button class="btn btn-primary"  th:text="#{save}"></button>
+            </div>
+        </form>
+    </div>
 </main>
 
 <script>
-    document.querySelector("#score-range").addEventListener("input", e => {
-        document.querySelector("#score-label").textContent = e.target.value
-    })
+    const scoreRange = document.querySelector("#score-range");
+    if(scoreRange){
+        scoreRange.addEventListener("input", e => {
+            document.querySelector("#score-label").textContent = e.target.value;
+        });
+    }
+
+    const scoreRange2 = document.querySelector("#score-range2");
+    if(scoreRange2){
+        scoreRange2.addEventListener("input", e => {
+            document.querySelector("#score-label2").textContent = e.target.value;
+        });
+    }
 </script>
 
 </body>
