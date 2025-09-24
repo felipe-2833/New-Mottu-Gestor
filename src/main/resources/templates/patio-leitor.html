@@ -29,31 +29,30 @@
     </div>
 </nav>
 
-<a href="/patio/form-patio" class="btn btn-primary " th:text="#{patio.new}"></a>
+<a th:if="${patioSelecionado != null}"
+   th:href="@{/patio-leitor/form-leitor(patioId=${patioSelecionado.id_patio})}"
+   class="btn btn-primary" th:text="#{leitor.new}">
+</a>
+<a href="/patio" class="btn btn-neutral" th:text="#{back}"></a>
 
 <div th:if="${message}" role="alert" class="alert alert-success alert-soft m-4">
     <span th:text="${message}"></span>
 </div>
 
 <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-4 p-8">
-    <div th:each="patio : ${patios}" class="card card-border bg-base-300 w-96">
-        <div th:text="${patio.endereco}" class="badge badge-accent m-4"></div>
+    <div th:each="leitor : ${leitores}" class="card card-border bg-base-300 w-96">
+        <div th:text="${leitor.patio.nome}" class="badge badge-accent m-4"></div>
 
         <div class="card-body items-center">
-            <h2 th:text="${patio.nome}" class="card-title"></h2>
-            <div th:text="${patio.capacidade}"
-                 class="radial-progress bg-secondary text-secondary-content border-secondary border-4"
-                 th:style="${'--value:' + patio.capacidade}" th:aria-valuenow="${patio.capacidade}" role="progressbar">
-            </div>
+            <h2 th:text="${leitor.nome}" class="card-title"></h2>
+            <span class="badge" th:text="${leitor.status}"></span>
         </div>
 
         <div class="card-actions justify-end m-4">
 
-            <a th:href="@{/patio-leitor(patioId=${patio.id_patio})}" class="btn btn-primary"  th:text="#{select}"></a>
+            <a th:href="@{'/patio-leitor/' + ${leitor.id_patio} + '/edit'}" class="btn btn-secondary" th:text="#{edit}"></a>
 
-            <a th:href="@{'/patio/' + ${patio.id_patio} + '/edit'}" class="btn btn-secondary" th:text="#{edit}"></a>
-
-            <form method="post" th:action="${'/patio/' + patio.id_patio}">
+            <form method="post" th:action="${'/patio-leitor/' + leitor.id_patio}">
                 <input type="hidden" name="_method" value="DELETE" />
                 <button class="btn btn-primary" th:text="#{delete}"></button>
             </form>
