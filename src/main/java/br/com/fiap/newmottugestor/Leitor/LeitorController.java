@@ -1,11 +1,13 @@
 package br.com.fiap.newmottugestor.Leitor;
 
 import br.com.fiap.newmottugestor.config.MessageHelper;
+import br.com.fiap.newmottugestor.enums.TipoStatus;
 import br.com.fiap.newmottugestor.patio.Patio;
 import br.com.fiap.newmottugestor.patio.PatioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,6 +36,8 @@ public class LeitorController {
             model.addAttribute("leitores", leitorService.getAllLeitor());
         }
 
+        model.addAttribute("statusList", TipoStatus.values());
+
         return "patio-leitor";
     }
 
@@ -42,7 +46,7 @@ public class LeitorController {
         Patio patio = patioService.getPatio(patioId);
         model.addAttribute("patio", patio);
         Leitor leitor = new Leitor();
-        //leitor.setStatus("ATIVO");
+        leitor.setStatus(TipoStatus.ATIVO);
         model.addAttribute("leitor", leitor);
 
         return "form-leitor";
@@ -61,27 +65,28 @@ public class LeitorController {
     }
 
     @DeleteMapping("{id}")
-    public String delete(@PathVariable Long id, RedirectAttributes redirect ){
+    public String delete(@PathVariable Long id, RedirectAttributes redirect, @RequestParam Long patioId ){
         leitorService.deleteById(id);
+        redirect.addAttribute("patioId", patioId);
         redirect.addFlashAttribute("message", messageHelper.get("leitor.delete.success"));
         return "redirect:/patio-leitor";
     }
 
-    @GetMapping("/{id}/edit")
-    public String edit(@PathVariable Long id, Model model) {
-       Leitor leitor = leitorService.getLeitor(id);
-        model.addAttribute("leitor", leitor);
-        return "form-leitor";
+    @PutMapping("/rename/{id}")
+    public String rename(@PathVariable Long id, @RequestParam String novoNome, RedirectAttributes redirect, @RequestParam Long patioId) {
+        leitorService.rename(id, novoNome);
+        redirect.addAttribute("patioId", patioId);
+        redirect.addFlashAttribute("message", messageHelper.get("leitor.rename.success"));
+        return "redirect:/patio-leitor";
     }
 
-    @PostMapping("/{id}")
-    public String update(@PathVariable Long id, @Valid Leitor leitor, BindingResult result, RedirectAttributes redirect) {
-        if (result.hasErrors()) return "form-leitor";
-
-        leitor.setId_leitor(id);
-        leitorService.save(leitor);
-
-        redirect.addFlashAttribute("message", messageHelper.get("leitor.update.success"));
+    @PutMapping("/status/{id}")
+    public String updateStatus(@PathVariable Long id,
+                               @RequestParam TipoStatus novoStatus,
+                               @RequestParam Long patioId,
+                               RedirectAttributes redirect) {
+        leitorService.updateStatus(id, novoStatus);
+        redirect.addAttribute("patioId", patioId);
         return "redirect:/patio-leitor";
     }
 }

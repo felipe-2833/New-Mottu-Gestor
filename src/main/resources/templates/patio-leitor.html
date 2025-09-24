@@ -13,14 +13,22 @@
     <div class="flex-1">
         <a class="btn btn-ghost text-xl">Mottu Gestor</a>
     </div>
+
+    <div class="flex-none">
+        <ul class="menu menu-horizontal px-1">
+            <li><a href="/moto" th:text="#{moto}"></a></li>
+            <li><a href="/patio" th:text="#{patio}"></a></li>
+        </ul>
+    </div>
+
     <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
             <li>
                 <details>
                     <summary>🌎</summary>
                     <ul class="bg-base-100 rounded-t-none p-2">
-                        <li><a href="?lang=pt_BR">🇧🇷</a></li>
-                        <li><a href="?lang=en_US">🏴󠁧󠁢󠁥󠁮󠁧󠁿</a></li>
+                        <li><a th:href="@{/patio-leitor(patioId=${param.patioId}, lang='pt_BR')}">🇧🇷</a></li>
+                        <li><a th:href="@{/patio-leitor(patioId=${param.patioId}, lang='en_US')}">🏴</a></li>
                         <li><a href="/logout">Logout</a></li>
                     </ul>
                 </details>
@@ -30,7 +38,7 @@
 </nav>
 
 <a th:if="${patioSelecionado != null}"
-   th:href="@{/patio-leitor/form-leitor(patioId=${patioSelecionado.id_patio})}"
+   th:href="@{/patio-leitor/form-leitor(patioId=${patioSelecionado.idPatio})}"
    class="btn btn-primary" th:text="#{leitor.new}">
 </a>
 <a href="/patio" class="btn btn-neutral" th:text="#{back}"></a>
@@ -45,20 +53,61 @@
 
         <div class="card-body items-center">
             <h2 th:text="${leitor.nome}" class="card-title"></h2>
-            <span class="badge" th:text="${leitor.status}"></span>
+            <form th:action="@{'/patio-leitor/status/' + ${leitor.idLeitor}}" method="post">
+                <input type="hidden" name="_method" value="PUT" />
+                <input type="hidden" name="patioId" th:value="${leitor.patio?.idPatio}" />
+                <input type="hidden" name="novoStatus" th:value="${leitor.status?.name() == 'ATIVO' ? T(br.com.fiap.newmottugestor.enums.TipoStatus).INATIVO : T(br.com.fiap.newmottugestor.enums.TipoStatus).ATIVO}" />
+
+                <button type="submit" th:if="${leitor.status != null}"
+                        th:text="${leitor.status?.name() == 'ATIVO' ? 'ATIVO' : 'INATIVO'}"
+                        th:class="${leitor.status?.name() == 'ATIVO' ? 'btn btn-success' : 'btn btn-error'}">
+                </button>
+            </form>
+
         </div>
 
         <div class="card-actions justify-end m-4">
 
-            <a th:href="@{'/patio-leitor/' + ${leitor.id_patio} + '/edit'}" class="btn btn-secondary" th:text="#{edit}"></a>
+            <form method="post" th:action="@{'/patio-leitor/rename/' + ${leitor.idLeitor}}" class="rename-form">
+                <input type="hidden" name="_method" value="PUT" />
+                <input type="hidden" name="patioId" th:value="${leitor.patio.idPatio}" />
 
-            <form method="post" th:action="${'/patio-leitor/' + leitor.id_patio}">
+                <button type="button" class="btn btn-warning" onclick="toggleInput(this)" th:text="#{rename}"></button>
+                <input type="text" name="novoNome" class="hidden input-rename" required />
+                <button type="submit" class="btn btn-info hidden submit-rename" th:text="#{save}"></button>
+            </form>
+
+            <form method="post" th:action="${'/patio-leitor/' + leitor.idLeitor}">
                 <input type="hidden" name="_method" value="DELETE" />
+                <input type="hidden" name="patioId" th:value="${patioSelecionado.idPatio}" />
                 <button class="btn btn-primary" th:text="#{delete}"></button>
             </form>
         </div>
     </div>
 </main>
+
+<script>
+
+    const patioId = document.getElementById('patioId').dataset.patioId;
+
+
+    function toggleInput(btn) {
+        const form = btn.closest('form');
+        const input = form.querySelector('.input-rename');
+        const submit = form.querySelector('.submit-rename');
+
+        input.classList.toggle('hidden');
+        submit.classList.toggle('hidden');
+
+        if (!input.classList.contains('hidden')) {
+            input.focus();
+        } else {
+            input.value = '';
+        }
+    }
+
+
+</script>
 
 </body>
 </html>

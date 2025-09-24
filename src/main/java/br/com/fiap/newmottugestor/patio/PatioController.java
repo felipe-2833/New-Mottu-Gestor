@@ -59,7 +59,7 @@ public class PatioController {
     public String update(@PathVariable Long id, @Valid Patio patio, BindingResult result, RedirectAttributes redirect) {
         if (result.hasErrors()) return "form-patio";
 
-        patio.setId_patio(id);
+        patio.setIdPatio(id);
         patioService.save(patio);
 
         redirect.addFlashAttribute("message", messageHelper.get("patio.update.success"));

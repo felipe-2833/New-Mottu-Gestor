@@ -19,12 +19,12 @@ import net.minidev.json.annotate.JsonIgnore;
 public class Leitor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_leitor;
+    private Long idLeitor;
 
     @NotBlank(message = "{leitor.nome.notblank}")
     private String nome;
 
-    @NotNull(message = "{leitor.endereco.notnull}")
+    @NotNull(message = "{leitor.tipostatus.notnull}")
     @Enumerated(EnumType.STRING)
     private TipoStatus status;
 

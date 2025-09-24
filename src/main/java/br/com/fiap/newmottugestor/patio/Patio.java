@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class Patio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_patio;
+    private Long idPatio;
 
     @NotBlank(message = "{patio.nome.notnull}")
     private String nome;

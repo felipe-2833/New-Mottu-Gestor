@@ -22,21 +22,20 @@ public class Moto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_moto;
+    private Long idMoto;
 
     @NotBlank(message = "{moto.placa.notblank}")
     @Pattern(regexp = "^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$",message = "{moto.placa.pattern}")
     private String placa;
 
     @NotBlank(message = "{moto.modelo.notblank}")
-    @Pattern(regexp = "^[A-Z].*", message = "{moto.modelo.pattern}")
     private String modelo;
 
     @NotBlank(message = "{moto.rfid.notblank}")
     private String rfid_tag;
 
     @PastOrPresent(message = "{moto.data.partorpresent}")
-    private LocalDate data_cadastro;
+    private LocalDate dataCadastro;
 
     @NotBlank(message = "{moto.servico.notblank}")
     private String servico;

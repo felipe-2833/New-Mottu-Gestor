@@ -29,10 +29,10 @@ import lombok.NoArgsConstructor;
 public class Movimento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_moviment;
+    private Long idMoviment;
 
     @PastOrPresent(message = "{movimento.data.pastorpresent}")
-    private LocalDate data_evento;
+    private LocalDate dataEvento;
 
     @ManyToOne
     @JsonIgnore
