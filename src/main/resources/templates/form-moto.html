@@ -39,9 +39,9 @@
 
 <main class="grid place-items-center gap-4 p-8">
     <div class="w-full max-w-md">
-        <form  th:object="${moto}" th:action="@{/moto/form-moto}" method="post">
+        <form  th:if="${moto.idMoto == null}" th:object="${moto}" th:action="@{/moto/form-moto}" method="post">
             <fieldset class="fieldset">
-                <legend class="fieldset-legend"th:text="#{name}"></legend>
+                <legend class="fieldset-legend"th:text="#{plate}"></legend>
                 <input th:field="*{placa}" th:errorclass="input-error" type="text" class="input" />
                 <p class="label text-error" th:errors="*{placa}"></p>
             </fieldset>
@@ -79,12 +79,78 @@
 
             <fieldset class="fieldset">
                 <legend class="fieldset-legend" th:text="#{reader}"></legend>
-                <input th:field="*{leitor}" th:errorclass="input-error" type="text" class="input" />
+
+                <select th:field="*{leitor}" class="input" th:errorclass="input-error">
+                    <option value="" disabled selected>Selecione um leitor</option>
+                    <option th:each="l : ${leitores}"
+                            th:value="${l.idLeitor}"
+                            th:text="${l.nome} + ' (' + ${l.patio.nome} + ')'">
+                    </option>
+                </select>
+
                 <p class="label text-error" th:errors="*{leitor}"></p>
             </fieldset>
 
             <div class="space-x-4">
-                <a href="/patio" class="btn btn-neutral" th:text="#{cancel}"></a>
+                <a href="/moto" class="btn btn-neutral" th:text="#{cancel}"></a>
+                <button class="btn btn-primary"  th:text="#{save}"></button>
+            </div>
+
+        </form>
+        <form  th:if="${moto.idMoto != null}" th:object="${moto}" th:action="@{/moto/{id}(id=${moto.idMoto})}" method="post">
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend"th:text="#{plate}"></legend>
+                <input th:field="*{placa}" th:errorclass="input-error" type="text" class="input" />
+                <p class="label text-error" th:errors="*{placa}"></p>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend" th:text="#{model}"></legend>
+
+                <select th:field="*{modelo}" class="input" th:errorclass="input-error">
+                    <option value="" disabled selected th:text="#{modelselect}"></option>
+                    <option th:each="m : ${modelos}" th:value="${m}" th:text="${m}"></option>
+                </select>
+
+                <p class="label text-error" th:errors="*{modelo}"></p>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend" th:text="#{rfid}"></legend>
+                <input th:field="*{rfid_tag}" th:errorclass="input-error" type="text" class="input" />
+                <p class="label text-error" th:errors="*{rfid_tag}"></p>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend" th:text="#{date}"></legend>
+                <input type="date"
+                       th:field="*{dataCadastro}"
+                       class="input input-bordered bg-base-100 border border-base-300 shadow-lg rounded-box"/>
+                <p class="label text-error" th:errors="*{dataCadastro}"></p>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend" th:text="#{service}"></legend>
+                <textarea th:field="*{servico}" th:errorclass="textarea-error" class="textarea" ></textarea>
+                <p class="label text-error" th:errors="*{servico}"></p>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend" th:text="#{reader}"></legend>
+
+                <select th:field="*{leitor}" class="input" th:errorclass="input-error">
+                    <option value="" disabled selected>Selecione um leitor</option>
+                    <option th:each="l : ${leitores}"
+                            th:value="${l.idLeitor}"
+                            th:text="${l.nome} + ' (' + ${l.patio.nome} + ')'">
+                    </option>
+                </select>
+
+                <p class="label text-error" th:errors="*{leitor}"></p>
+            </fieldset>
+
+            <div class="space-x-4">
+                <a href="/moto" class="btn btn-neutral" th:text="#{cancel}"></a>
                 <button class="btn btn-primary"  th:text="#{save}"></button>
             </div>
 

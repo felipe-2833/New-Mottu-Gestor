@@ -37,11 +37,60 @@
     </div>
 </nav>
 
-<a href="/moto/form-moto" class="btn btn-primary " th:text="#{moto.new}"></a>
+<div class="flex justify-between items-center mb-4">
+    <a href="/moto/form-moto" class="btn btn-primary " th:text="#{moto.new}"></a>
+
+    <div class="dropdown">
+        <label tabindex="0" class="btn btn-secondary m-1" th:text="#{filter}"></label>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+            <li><a th:href="@{/moto?sort=modelo}" th:text="#{model}"></a></li>
+            <li><a th:href="@{/moto?sort=dataCadastro}" th:text="#{date}"></a></li>
+            <li><a th:href="@{/moto?sort=leitor}" th:text="#{reader}"></a></li>
+            <li><a th:href="@{/moto?sort=limpar}" th:text="#{clean}"></a></li>
+        </ul>
+    </div>
+</div>
 
 <div th:if="${message}" role="alert" class="alert alert-success alert-soft m-4">
     <span th:text="${message}"></span>
 </div>
+
+<div class="overflow-x-auto">
+    <table class="table table-zebra">
+        <thead>
+        <tr>
+            <th th:text="#{plate}">Placa</th>
+            <th th:text="#{model}">Modelo</th>
+            <th th:text="#{rfid}">RFID</th>
+            <th th:text="#{date}">Data</th>
+            <th th:text="#{service}">Serviço</th>
+            <th th:text="#{reader}">Leitor</th>
+            <th>  </th>
+            <th>  </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="moto: ${motos}">
+            <td th:text="${moto.placa}">Placa</td>
+            <td th:text="${moto.modelo}">Modelo</td>
+            <td th:text="${moto.rfid_tag}">RFID</td>
+            <td th:text="${moto.dataCadastro}">Data</td>
+            <td th:text="${moto.servico}">Serviço</td>
+            <td th:text="${moto.leitor != null ? moto.leitor.nome + ' (' + moto.leitor.patio.nome + ')' : '-'}">Leitor</td>
+            <td>
+                <form method="post" th:action="@{'/moto/' + ${moto.idMoto}}">
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <button class="btn btn-error" th:text="#{delete}"></button>
+                </form>
+            </td>
+            <td>
+                <a th:href="@{'/moto/' + ${moto.idMoto} + '/edit'}" class="btn btn-secondary" th:text="#{edit}"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
 
 
 

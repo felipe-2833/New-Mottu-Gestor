@@ -3,6 +3,7 @@ package br.com.fiap.newmottugestor.moto;
 import br.com.fiap.newmottugestor.Leitor.Leitor;
 import br.com.fiap.newmottugestor.config.MessageHelper;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,19 @@ public class MotoService {
     public void deleteById(Long id) {
         motoRepository.delete(getMoto(id));
     }
+
+    List<Moto> listarTodosOrdenadoPorModelo() {
+        return motoRepository.findAll(Sort.by("modelo").ascending());
+    }
+
+    List<Moto> listarTodosOrdenadoPorData() {
+        return motoRepository.findAll(Sort.by("dataCadastro").descending());
+    }
+
+    List<Moto> listarTodosOrdenadoPorLeitor() {
+        return motoRepository.findAll(Sort.by("leitor.nome").ascending());
+    }
+
 
     public Moto getMoto(Long id) {
         return motoRepository.findById(id).orElseThrow(
