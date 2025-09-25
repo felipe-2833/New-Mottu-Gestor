@@ -6,6 +6,8 @@ import br.com.fiap.newmottugestor.enums.TipoStatus;
 import br.com.fiap.newmottugestor.patio.PatioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +32,7 @@ public class MovimentoController {
                          @RequestParam(required = false) TipoMovimento tipo,
                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
                          @RequestParam(required = false) String modelo,
+                         @AuthenticationPrincipal OAuth2User user,
                          Model model) {
 
         List<Movimento> movimentos = movimentoService.buscarComFiltros(patioId, leitorId, tipo, data, modelo);
@@ -44,7 +47,7 @@ public class MovimentoController {
 
         model.addAttribute("patios", patios);
         model.addAttribute("leitores", leitores);
-
+        model.addAttribute("user", user);
         return "movimento";
     }
 }

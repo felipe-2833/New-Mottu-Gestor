@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,7 +28,7 @@ public class LeitorController {
     private final MessageHelper messageHelper;
 
     @GetMapping
-    public String index(@RequestParam(required = false) Long patioId, Model model){
+    public String index(@RequestParam(required = false) Long patioId, Model model, @AuthenticationPrincipal OAuth2User user){
         if (patioId != null) {
             Patio patio = patioService.getPatio(patioId);
             List<Leitor> leitores = leitorService.getLeitorsByPatio(patioId);
@@ -37,17 +39,19 @@ public class LeitorController {
         }
 
         model.addAttribute("statusList", TipoStatus.values());
+        model.addAttribute("user", user);
 
         return "patio-leitor";
     }
 
     @GetMapping("/form-leitor")
-    public String form(@RequestParam Long patioId, Model model){
+    public String form(@RequestParam Long patioId, Model model, @AuthenticationPrincipal OAuth2User user){
         Patio patio = patioService.getPatio(patioId);
         model.addAttribute("patio", patio);
         Leitor leitor = new Leitor();
         leitor.setStatus(TipoStatus.ATIVO);
         model.addAttribute("leitor", leitor);
+        model.addAttribute("user", user);
 
         return "form-leitor";
     }

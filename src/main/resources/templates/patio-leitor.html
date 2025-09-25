@@ -30,10 +30,26 @@
                     <ul class="bg-base-100 rounded-t-none p-2">
                         <li><a th:href="@{/patio-leitor(patioId=${param.patioId}, lang='pt_BR')}">🇧🇷</a></li>
                         <li><a th:href="@{/patio-leitor(patioId=${param.patioId}, lang='en_US')}">🏴</a></li>
-                        <li><a href="/logout">Logout</a></li>
                     </ul>
                 </details>
             </li>
+        </ul>
+    </div>
+    <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+            <div class="w-10 rounded-full">
+                <img
+                        alt="avatar do usuário"
+                        th:src="${user.attributes.avatar_url}" />
+            </div>
+        </div>
+        <ul
+                tabindex="0"
+                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+            <li>
+                <a class="justify-between" th:text="${user.attributes.login}"></a>
+            </li>
+            <li><a href="/logout">Logout</a></li>
         </ul>
     </div>
 </nav>

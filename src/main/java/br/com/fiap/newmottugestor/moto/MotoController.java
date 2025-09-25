@@ -9,6 +9,8 @@ import br.com.fiap.newmottugestor.patio.Patio;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,7 +30,7 @@ public class MotoController {
     private final MessageHelper messageHelper;
 
     @GetMapping
-    public String index(@RequestParam(value = "sort", required = false) String sort, Model model) {
+    public String index(@RequestParam(value = "sort", required = false) String sort, Model model, @AuthenticationPrincipal OAuth2User user) {
         var motos =  motoService.getAllMoto();
 
         if("modelo".equals(sort)) {
@@ -42,11 +44,12 @@ public class MotoController {
         }
 
         model.addAttribute("motos", motos);
+        model.addAttribute("user", user);
         return "moto";
     }
 
     @GetMapping("/form-moto")
-    public String form(Model model){
+    public String form(Model model, @AuthenticationPrincipal OAuth2User user){
         List<String> modelos = List.of(
                 "Mottu Sport",
                 "Mottu Sport ESD",
@@ -57,6 +60,7 @@ public class MotoController {
         model.addAttribute("modelos", modelos);
         model.addAttribute("leitores", leitoresAtivos);
         model.addAttribute("moto", new Moto());
+        model.addAttribute("user", user);
         return "form-moto";
     }
 
@@ -76,7 +80,7 @@ public class MotoController {
     }
 
     @GetMapping("/{id}/edit")
-    public String edit(@PathVariable Long id, Model model) {
+    public String edit(@PathVariable Long id, Model model, @AuthenticationPrincipal OAuth2User user) {
         List<String> modelos = List.of(
                 "Mottu Sport",
                 "Mottu Sport ESD",
@@ -88,6 +92,7 @@ public class MotoController {
         model.addAttribute("leitores", leitoresAtivos);
         Moto moto = motoService.getMoto(id);
         model.addAttribute("moto", moto);
+        model.addAttribute("user", user);
         return "form-moto";
     }
 

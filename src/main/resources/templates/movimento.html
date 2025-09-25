@@ -30,34 +30,50 @@
                     <ul class="bg-base-100 rounded-t-none p-2">
                         <li><a href="?lang=pt_BR">🇧🇷</a></li>
                         <li><a href="?lang=en_US">🏴󠁧󠁢󠁥󠁮󠁧󠁿</a></li>
-                        <li><a href="/logout">Logout</a></li>
                     </ul>
                 </details>
             </li>
         </ul>
     </div>
+    <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+            <div class="w-10 rounded-full">
+                <img
+                        alt="avatar do usuário"
+                        th:src="${user.attributes.avatar_url}" />
+            </div>
+        </div>
+        <ul
+                tabindex="0"
+                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+            <li>
+                <a class="justify-between" th:text="${user.attributes.login}"></a>
+            </li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
 </nav>
 
 <form method="get" class="m-4 flex gap-2">
-    <input type="text" name="modelo" placeholder="Modelo" class="input input-bordered" />
+    <input type="text" name="modelo" th:placeholder="#{model}" class="input input-bordered" />
     <input type="date" name="data" class="input input-bordered" />
 
     <select name="tipo" class="select select-bordered">
-        <option value="">Todos os tipos</option>
+        <option value="" th:text="#{allof} + ' ' +#{movimentype}"></option>
         <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
     </select>
 
     <select name="patioId" class="select select-bordered">
-        <option value="">Todos os pátios</option>
+        <option value="" th:text="#{allof} + ' ' +#{plate}"></option>
         <option th:each="p : ${patios}" th:value="${p.idPatio}" th:text="${p.nome}"></option>
     </select>
 
     <select name="leitorId" class="select select-bordered">
-        <option value="">Todos os leitores</option>
+        <option value="" th:text="#{allof} + ' ' +#{reader}"></option>
         <option th:each="l : ${leitores}" th:value="${l.idLeitor}" th:text="${l.nome}"></option>
     </select>
 
-    <button type="submit" class="btn btn-primary">Filtrar</button>
+    <button type="submit" class="btn btn-primary" th:text="#{filter}"></button>
 </form>
 
 <div th:if="${message}" role="alert" class="alert alert-success alert-soft m-4">
