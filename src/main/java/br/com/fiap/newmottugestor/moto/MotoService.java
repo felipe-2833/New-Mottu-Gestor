@@ -2,10 +2,14 @@ package br.com.fiap.newmottugestor.moto;
 
 import br.com.fiap.newmottugestor.Leitor.Leitor;
 import br.com.fiap.newmottugestor.config.MessageHelper;
+import br.com.fiap.newmottugestor.movimento.MovimentoSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,7 +24,7 @@ public class MotoService {
     }
 
     public List<Moto> getAllMoto() {
-        return motoRepository.findAll();
+        return motoRepository.findAll(Sort.by(Sort.Direction.DESC, "idMoto"));
     }
 
     public Moto save(Moto moto) {
@@ -43,10 +47,30 @@ public class MotoService {
         return motoRepository.findAll(Sort.by("leitor.nome").ascending());
     }
 
+    public List<Moto> buscarComFiltros(Long leitorId, LocalDate data, String modelo) {
+
+        List<Specification<Moto>> specs = new ArrayList<>();
+
+        if (leitorId != null) specs.add(MotoSpecification.comLeitor(leitorId));
+        if (data != null) specs.add(MotoSpecification.comData(data));
+        if (modelo != null && !modelo.isBlank()) specs.add(MotoSpecification.comModelo(modelo));
+
+        Specification<Moto> finalSpec = specs.stream()
+                .reduce((s1, s2) -> s1.and(s2))
+                .orElse((root, query, cb) -> cb.conjunction());
+
+        return motoRepository.findAll(finalSpec, Sort.by(Sort.Direction.DESC, "idMoto"));
+
+    }
+
 
     public Moto getMoto(Long id) {
         return motoRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(messageHelper.get("moto.notfound"))
         );
+    }
+
+    public List<Moto> buscarMotosPorPatio(Long patioId) {
+        return motoRepository.findByLeitorPatioIdPatio(patioId);
     }
 }

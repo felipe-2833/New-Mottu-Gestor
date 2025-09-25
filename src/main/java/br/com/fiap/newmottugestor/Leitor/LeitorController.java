@@ -2,6 +2,8 @@ package br.com.fiap.newmottugestor.Leitor;
 
 import br.com.fiap.newmottugestor.config.MessageHelper;
 import br.com.fiap.newmottugestor.enums.TipoStatus;
+import br.com.fiap.newmottugestor.moto.Moto;
+import br.com.fiap.newmottugestor.moto.MotoService;
 import br.com.fiap.newmottugestor.patio.Patio;
 import br.com.fiap.newmottugestor.patio.PatioService;
 import jakarta.validation.Valid;
@@ -24,6 +26,7 @@ import java.util.List;
 public class LeitorController {
     private final LeitorService leitorService;
     private final PatioService patioService;
+    private final MotoService motoService;
     private final MessageSource messageSource;
     private final MessageHelper messageHelper;
 
@@ -38,8 +41,12 @@ public class LeitorController {
             model.addAttribute("leitores", leitorService.getAllLeitor());
         }
 
+        List<Moto> motos = motoService.buscarMotosPorPatio(patioId);
+
+
         model.addAttribute("statusList", TipoStatus.values());
         model.addAttribute("user", user);
+        model.addAttribute("motos", motos);
 
         return "patio-leitor";
     }

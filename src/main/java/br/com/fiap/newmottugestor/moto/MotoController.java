@@ -4,11 +4,14 @@ import br.com.fiap.newmottugestor.Leitor.Leitor;
 import br.com.fiap.newmottugestor.Leitor.LeitorRepository;
 import br.com.fiap.newmottugestor.Leitor.LeitorService;
 import br.com.fiap.newmottugestor.config.MessageHelper;
+import br.com.fiap.newmottugestor.enums.TipoMovimento;
 import br.com.fiap.newmottugestor.enums.TipoStatus;
+import br.com.fiap.newmottugestor.movimento.Movimento;
 import br.com.fiap.newmottugestor.patio.Patio;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -17,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -26,23 +30,26 @@ public class MotoController {
 
     private final MotoService motoService;
     private final LeitorRepository leitorRepository;
+    private final LeitorService leitorService;
     private final MessageSource messageSource;
     private final MessageHelper messageHelper;
 
     @GetMapping
-    public String index(@RequestParam(value = "sort", required = false) String sort, Model model, @AuthenticationPrincipal OAuth2User user) {
-        var motos =  motoService.getAllMoto();
-
-        if("modelo".equals(sort)) {
-            motos = motoService.listarTodosOrdenadoPorModelo();
-        } else if("dataCadastro".equals(sort)) {
-            motos = motoService.listarTodosOrdenadoPorData();
-        } else if("leitor".equals(sort)) {
-            motos = motoService.listarTodosOrdenadoPorLeitor();
-        } else {
-            motos = motoService.getAllMoto();
-        }
-
+    public String index(@RequestParam(required = false) Long leitorId,
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
+                        @RequestParam(required = false) String modelo, Model model, @AuthenticationPrincipal OAuth2User user) {
+        List<Moto> motos = motoService.buscarComFiltros(leitorId, data, modelo);
+        var leitores = leitorService.getAllLeitor().stream()
+                .filter(l -> l.getStatus().equals(TipoStatus.ATIVO))
+                .toList();
+        List<String> modelos = List.of(
+                "Mottu Sport",
+                "Mottu Sport ESD",
+                "Mottu E (elétrica)",
+                "Mottu Pop"
+        );
+        model.addAttribute("modelos", modelos);
+        model.addAttribute("leitores", leitores);
         model.addAttribute("motos", motos);
         model.addAttribute("user", user);
         return "moto";

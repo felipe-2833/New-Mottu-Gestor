@@ -11,7 +11,7 @@
 
 <nav class="navbar bg-base-300 shadow-sm">
     <div class="flex-1">
-        <a class="btn btn-ghost text-xl">Mottu Gestor</a>
+        <a href="/patio" class="btn btn-ghost text-xl">Mottu Gestor</a>
     </div>
 
     <div class="flex-none">
@@ -57,15 +57,23 @@
 <div class="flex justify-between items-center mb-4">
     <a href="/moto/form-moto" class="btn btn-primary " th:text="#{moto.new}"></a>
 
-    <div class="dropdown">
-        <label tabindex="0" class="btn btn-secondary m-1" th:text="#{filter}"></label>
-        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
-            <li><a th:href="@{/moto?sort=modelo}" th:text="#{model}"></a></li>
-            <li><a th:href="@{/moto?sort=dataCadastro}" th:text="#{date}"></a></li>
-            <li><a th:href="@{/moto?sort=leitor}" th:text="#{reader}"></a></li>
-            <li><a th:href="@{/moto?sort=limpar}" th:text="#{clean}"></a></li>
-        </ul>
-    </div>
+    <form method="get" class="m-4 flex gap-2">
+
+        <select name="modelo" class="select select-bordered">
+            <option value="" th:text="#{model}"></option>
+            <option th:each="m : ${modelos}" th:value="${m}" th:text="${m}"></option>
+        </select>
+
+        <input type="date" name="data" class="input input-bordered" />
+
+
+        <select name="leitorId" class="select select-bordered">
+            <option value="" th:text="#{allof} + ' ' +#{reader}"></option>
+            <option th:each="l : ${leitores}" th:value="${l.idLeitor}" th:text="${l.nome}"></option>
+        </select>
+
+        <button type="submit" class="btn btn-primary" th:text="#{filter}"></button>
+    </form>
 </div>
 
 <div th:if="${message}" role="alert" class="alert alert-success alert-soft m-4">

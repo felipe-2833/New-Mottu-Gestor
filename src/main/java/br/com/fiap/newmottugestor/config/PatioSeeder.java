@@ -40,6 +40,14 @@ public class PatioSeeder {
             return;
         }
 
+        List<String> modelos = List.of(
+                "Mottu Sport",
+                "Mottu Sport ESD",
+                "Mottu E (elétrica)",
+                "Mottu Pop"
+        );
+        Random random = new Random();
+
         // Criar pátios
         Patio patio1 = Patio.builder().nome("Patio A").endereco("Rua A, 123").capacidade(100.0).build();
         Patio patio2 = Patio.builder().nome("Patio B").endereco("Rua B, 456").capacidade(50.0).build();
@@ -69,7 +77,7 @@ public class PatioSeeder {
 
                     Moto moto = Moto.builder()
                             .placa(placaGerada)
-                            .modelo("Modelo " + motoCount)
+                            .modelo(modelos.get(random.nextInt(modelos.size())))
                             .rfid_tag("RFID" + motoCount)
                             .dataCadastro(LocalDate.now())
                             .servico("Serviço " + motoCount)

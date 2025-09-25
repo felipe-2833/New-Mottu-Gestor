@@ -48,7 +48,8 @@ public class MovimentoService {
                 .reduce((s1, s2) -> s1.and(s2))
                 .orElse((root, query, cb) -> cb.conjunction());
 
-        return movimentoRepository.findAll(finalSpec);
+        return movimentoRepository.findAll(finalSpec, Sort.by(Sort.Direction.DESC, "dataEvento"));
+
     }
 
 
