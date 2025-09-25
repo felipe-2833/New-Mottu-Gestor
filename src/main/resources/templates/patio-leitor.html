@@ -85,6 +85,8 @@
 
         <div class="card-actions justify-end m-4">
 
+            <a th:href="@{'/moto/leitor-moto/' + ${leitor.idLeitor}(patioId=${patioSelecionado.idPatio})}" class="btn btn-primary"  th:text="#{select}"></a>
+
             <form method="post" th:action="@{'/patio-leitor/rename/' + ${leitor.idLeitor}}" class="rename-form">
                 <input type="hidden" name="_method" value="PUT" />
                 <input type="hidden" name="patioId" th:value="${leitor.patio.idPatio}" />
@@ -102,46 +104,6 @@
         </div>
     </div>
 </main>
-<hr class="border-t border-gray-300 mb-8">
-<div class="w-full my-8 text-center">
-    <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2" th:text="#{moto} + ' ' + #{patio}"></h1>
-</div>
-<div class="overflow-x-auto">
-    <table class="table table-zebra">
-        <thead>
-        <tr>
-            <th th:text="#{plate}">Placa</th>
-            <th th:text="#{model}">Modelo</th>
-            <th th:text="#{rfid}">RFID</th>
-            <th th:text="#{date}">Data</th>
-            <th th:text="#{service}">Serviço</th>
-            <th th:text="#{reader}">Leitor</th>
-            <th>  </th>
-            <th>  </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="moto: ${motos}">
-            <td th:text="${moto.placa}">Placa</td>
-            <td th:text="${moto.modelo}">Modelo</td>
-            <td th:text="${moto.rfid_tag}">RFID</td>
-            <td th:text="${moto.dataCadastro}">Data</td>
-            <td th:text="${moto.servico}">Serviço</td>
-            <td th:text="${moto.leitor != null ? moto.leitor.nome : '-'}">Leitor</td>
-            <td>
-                <form method="post" th:action="@{'/moto/' + ${moto.idMoto}}">
-                    <input type="hidden" name="_method" value="DELETE" />
-                    <button class="btn btn-error" th:text="#{delete}"></button>
-                </form>
-            </td>
-            <td>
-                <a th:href="@{'/moto/' + ${moto.idMoto} + '/edit'}" class="btn btn-secondary" th:text="#{edit}"></a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
 <script>
 
     const patioId = document.getElementById('patioId').dataset.patioId;

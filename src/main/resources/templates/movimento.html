@@ -55,7 +55,12 @@
 </nav>
 
 <form method="get" class="m-4 flex gap-2">
-    <input type="text" name="modelo" th:placeholder="#{model}" class="input input-bordered" />
+
+    <select name="modelo" class="select select-bordered">
+        <option value="" th:text="#{model}"></option>
+        <option th:each="m : ${modelos}" th:value="${m}" th:text="${m}"></option>
+    </select>
+
     <input type="date" name="data" class="input input-bordered" />
 
     <select name="tipo" class="select select-bordered">

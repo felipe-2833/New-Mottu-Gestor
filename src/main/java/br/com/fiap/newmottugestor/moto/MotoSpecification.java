@@ -16,4 +16,8 @@ public class MotoSpecification {
     public static Specification<Moto> comModelo(String modelo) {
         return (root, query, cb) -> cb.equal(root.get("modelo"), modelo);
     }
+
+    public static Specification<Moto> comPlaca(String placa) {
+        return (root, query, cb) -> cb.equal(root.get("placa"), placa);
+    }
 }

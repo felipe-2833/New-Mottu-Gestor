@@ -41,13 +41,8 @@ public class LeitorController {
             model.addAttribute("leitores", leitorService.getAllLeitor());
         }
 
-        List<Moto> motos = motoService.buscarMotosPorPatio(patioId);
-
-
         model.addAttribute("statusList", TipoStatus.values());
         model.addAttribute("user", user);
-        model.addAttribute("motos", motos);
-
         return "patio-leitor";
     }
 

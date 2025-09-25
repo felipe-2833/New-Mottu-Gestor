@@ -35,25 +35,14 @@ public class MotoService {
         motoRepository.delete(getMoto(id));
     }
 
-    List<Moto> listarTodosOrdenadoPorModelo() {
-        return motoRepository.findAll(Sort.by("modelo").ascending());
-    }
-
-    List<Moto> listarTodosOrdenadoPorData() {
-        return motoRepository.findAll(Sort.by("dataCadastro").descending());
-    }
-
-    List<Moto> listarTodosOrdenadoPorLeitor() {
-        return motoRepository.findAll(Sort.by("leitor.nome").ascending());
-    }
-
-    public List<Moto> buscarComFiltros(Long leitorId, LocalDate data, String modelo) {
+    public List<Moto> buscarComFiltros(Long leitorId, LocalDate data, String modelo, String placa) {
 
         List<Specification<Moto>> specs = new ArrayList<>();
 
         if (leitorId != null) specs.add(MotoSpecification.comLeitor(leitorId));
         if (data != null) specs.add(MotoSpecification.comData(data));
         if (modelo != null && !modelo.isBlank()) specs.add(MotoSpecification.comModelo(modelo));
+        if (placa != null && !placa.isBlank()) specs.add(MotoSpecification.comPlaca(placa));
 
         Specification<Moto> finalSpec = specs.stream()
                 .reduce((s1, s2) -> s1.and(s2))

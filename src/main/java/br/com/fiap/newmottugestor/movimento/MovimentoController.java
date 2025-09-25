@@ -36,6 +36,14 @@ public class MovimentoController {
                          Model model) {
 
         List<Movimento> movimentos = movimentoService.buscarComFiltros(patioId, leitorId, tipo, data, modelo);
+        List<String> modelos = List.of(
+                "Mottu Sport",
+                "Mottu Sport ESD",
+                "Mottu E (elétrica)",
+                "Mottu Pop"
+        );
+
+        model.addAttribute("modelos", modelos);
 
         model.addAttribute("movimentos", movimentos);
         model.addAttribute("tipos", TipoMovimento.values());

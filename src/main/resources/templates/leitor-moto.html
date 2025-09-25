@@ -8,7 +8,6 @@
     <title>MottuGestor</title>
 </head>
 <body>
-
 <nav class="navbar bg-base-300 shadow-sm">
     <div class="flex-1">
         <a href="/patio" class="btn btn-ghost text-xl">Mottu Gestor</a>
@@ -28,8 +27,8 @@
                 <details>
                     <summary>🌎</summary>
                     <ul class="bg-base-100 rounded-t-none p-2">
-                        <li><a href="?lang=pt_BR">🇧🇷</a></li>
-                        <li><a href="?lang=en_US">🏴󠁧󠁢󠁥󠁮󠁧󠁿</a></li>
+                        <li><a th:href="@{/patio-leitor(patioId=${param.patioId}, lang='pt_BR')}">🇧🇷</a></li>
+                        <li><a th:href="@{/patio-leitor(patioId=${param.patioId}, lang='en_US')}">🏴</a></li>
                     </ul>
                 </details>
             </li>
@@ -53,9 +52,8 @@
         </ul>
     </div>
 </nav>
-
 <div class="flex justify-between items-center mb-4">
-    <a href="/moto/form-moto" class="btn btn-primary " th:text="#{moto.new}"></a>
+    <a th:href="@{/patio-leitor(patioId=${patioSelecionado.idPatio})}" class="btn btn-neutral" th:text="#{back}"></a>
 
     <form method="get" class="m-4 flex gap-2">
 
@@ -67,12 +65,6 @@
         </select>
 
         <input type="date" name="data" class="input input-bordered" />
-
-
-        <select name="leitorId" class="select select-bordered">
-            <option value="" th:text="#{allof} + ' ' +#{reader}"></option>
-            <option th:each="l : ${leitores}" th:value="${l.idLeitor}" th:text="${l.nome}"></option>
-        </select>
 
         <button type="submit" class="btn btn-primary" th:text="#{filter}"></button>
     </form>
@@ -117,9 +109,6 @@
         </tbody>
     </table>
 </div>
-
-
-
 
 </body>
 </html>

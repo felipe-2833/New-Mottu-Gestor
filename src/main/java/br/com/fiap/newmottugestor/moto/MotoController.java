@@ -7,7 +7,9 @@ import br.com.fiap.newmottugestor.config.MessageHelper;
 import br.com.fiap.newmottugestor.enums.TipoMovimento;
 import br.com.fiap.newmottugestor.enums.TipoStatus;
 import br.com.fiap.newmottugestor.movimento.Movimento;
+import br.com.fiap.newmottugestor.movimento.MovimentoRepository;
 import br.com.fiap.newmottugestor.patio.Patio;
+import br.com.fiap.newmottugestor.patio.PatioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -33,12 +35,13 @@ public class MotoController {
     private final LeitorService leitorService;
     private final MessageSource messageSource;
     private final MessageHelper messageHelper;
+    private final MovimentoRepository movimentoRepository;
 
     @GetMapping
     public String index(@RequestParam(required = false) Long leitorId,
                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
-                        @RequestParam(required = false) String modelo, Model model, @AuthenticationPrincipal OAuth2User user) {
-        List<Moto> motos = motoService.buscarComFiltros(leitorId, data, modelo);
+                        @RequestParam(required = false) String modelo,@RequestParam(required = false) String placa, Model model, @AuthenticationPrincipal OAuth2User user) {
+        List<Moto> motos = motoService.buscarComFiltros(leitorId, data, modelo, placa);
         var leitores = leitorService.getAllLeitor().stream()
                 .filter(l -> l.getStatus().equals(TipoStatus.ATIVO))
                 .toList();
@@ -71,6 +74,37 @@ public class MotoController {
         return "form-moto";
     }
 
+    @GetMapping("/leitor-moto/{leitorId}")
+    public String leitorMoto(@PathVariable Long leitorId,
+                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
+                             @RequestParam(required = false) String modelo,
+                             @RequestParam(required = false) String placa,
+                             Model model, @AuthenticationPrincipal OAuth2User user) {
+        Leitor leitor = leitorService.getLeitor(leitorId);
+        Patio patio = leitor.getPatio();
+        List<Moto> motos = motoService.buscarComFiltros(leitorId, data, modelo, placa);
+
+        var leitores = leitorService.getAllLeitor().stream()
+                .filter(l -> l.getStatus().equals(TipoStatus.ATIVO))
+                .toList();
+
+        List<String> modelos = List.of(
+                "Mottu Sport",
+                "Mottu Sport ESD",
+                "Mottu E (elétrica)",
+                "Mottu Pop"
+        );
+
+        model.addAttribute("patioSelecionado", patio);
+        model.addAttribute("modelos", modelos);
+        model.addAttribute("leitores", leitores);
+        model.addAttribute("motos", motos);
+        model.addAttribute("user", user);
+
+        return "leitor-moto";
+    }
+
+
     @PostMapping("/form-moto")
     public String create(@Valid Moto moto, RedirectAttributes redirect, BindingResult result ){
         if(result.hasErrors()) return "form-moto";
@@ -81,6 +115,11 @@ public class MotoController {
 
     @DeleteMapping("{id}")
     public String delete(@PathVariable Long id, RedirectAttributes redirect ){
+        List<Movimento> movimentos = movimentoRepository.findByMotoIdMoto(id);
+        if (!movimentos.isEmpty()) {
+            // Tratar a lógica para esses movimentos, talvez removendo ou alterando a referência
+            movimentoRepository.deleteAll(movimentos); // Exemplo de deleção
+        }
         motoService.deleteById(id);
         redirect.addFlashAttribute("message", messageHelper.get("moto.delete.success"));
         return "redirect:/moto";
