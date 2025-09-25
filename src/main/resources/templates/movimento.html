@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="forest">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <title>MottuGestor</title>
+</head>
+<body>
+
+<nav class="navbar bg-base-300 shadow-sm">
+    <div class="flex-1">
+        <a class="btn btn-ghost text-xl">Mottu Gestor</a>
+    </div>
+
+    <div class="flex-none">
+        <ul class="menu menu-horizontal px-1">
+            <li><a href="/moto" th:text="#{moto}"></a></li>
+            <li><a href="/patio" th:text="#{patio}"></a></li>
+            <li><a href="/movimento" th:text="#{moviment}"></a></li>
+        </ul>
+    </div>
+
+    <div class="flex-none">
+        <ul class="menu menu-horizontal px-1">
+            <li>
+                <details>
+                    <summary>🌎</summary>
+                    <ul class="bg-base-100 rounded-t-none p-2">
+                        <li><a href="?lang=pt_BR">🇧🇷</a></li>
+                        <li><a href="?lang=en_US">🏴󠁧󠁢󠁥󠁮󠁧󠁿</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<form method="get" class="m-4 flex gap-2">
+    <input type="text" name="modelo" placeholder="Modelo" class="input input-bordered" />
+    <input type="date" name="data" class="input input-bordered" />
+
+    <select name="tipo" class="select select-bordered">
+        <option value="">Todos os tipos</option>
+        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+    </select>
+
+    <select name="patioId" class="select select-bordered">
+        <option value="">Todos os pátios</option>
+        <option th:each="p : ${patios}" th:value="${p.idPatio}" th:text="${p.nome}"></option>
+    </select>
+
+    <select name="leitorId" class="select select-bordered">
+        <option value="">Todos os leitores</option>
+        <option th:each="l : ${leitores}" th:value="${l.idLeitor}" th:text="${l.nome}"></option>
+    </select>
+
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+
+<div th:if="${message}" role="alert" class="alert alert-success alert-soft m-4">
+    <span th:text="${message}"></span>
+</div>
+
+<div class="overflow-x-auto">
+    <table class="table table-zebra">
+        <thead>
+        <tr>
+<!--            <th th:text="#{user}"></th>-->
+            <th th:text="#{datevent}"></th>
+            <th th:text="#{plate}"></th>
+            <th th:text="#{model}"></th>
+            <th th:text="#{patio}"></th>
+            <th th:text="#{reader}"></th>
+            <th th:text="#{movimentype}"></th>
+            <th>  </th>
+            <th>  </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="movimento : ${movimentos}">
+<!--            <td th:text="${movimento.moto?.servico}"></td>-->
+            <td th:text="${movimento.dataEvento}"></td>
+            <td th:text="${movimento.moto?.placa}"></td>
+            <td th:text="${movimento.moto?.modelo}"></td>
+            <td th:text="${movimento.patio?.nome}"></td>
+            <td th:text="${movimento.leitor != null ? movimento.leitor.nome : '—'}"></td>
+            <td th:text="${movimento.tipoMovimento}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+
+</body>
+</html>

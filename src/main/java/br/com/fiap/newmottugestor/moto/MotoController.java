@@ -94,8 +94,10 @@ public class MotoController {
     @PostMapping("/{id}")
     public String update(@PathVariable Long id, @Valid Moto moto, BindingResult result, RedirectAttributes redirect) {
         if (result.hasErrors()) return "form-moto";
-
+        Moto antigaMoto = motoService.getMoto(id);
+        Leitor leitor = antigaMoto.getLeitor();
         moto.setIdMoto(id);
+        moto.setLeitor(leitor);
         motoService.save(moto);
 
         redirect.addFlashAttribute("message", messageHelper.get("moto.update.success"));
