@@ -1,6 +1,7 @@
 package br.com.fiap.newmottugestor.patio;
 
 import br.com.fiap.newmottugestor.config.MessageHelper;
+import br.com.fiap.newmottugestor.moto.MotoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -19,10 +20,14 @@ public class PatioController {
     private final PatioService patioService;
     private final MessageSource messageSource;
     private final MessageHelper messageHelper;
+    private final MotoService motoService;
 
     @GetMapping
     public String index(Model model) {
         var patios = patioService.getAllPatio();
+        var motos = motoService.getAllMoto();
+
+        model.addAttribute("motos", motos);
         model.addAttribute("patios", patios);
         return "index";
     }
