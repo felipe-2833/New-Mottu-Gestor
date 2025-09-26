@@ -27,8 +27,8 @@
                 <details>
                     <summary>🌎</summary>
                     <ul class="bg-base-100 rounded-t-none p-2">
-                        <li><a th:href="@{/patio-leitor(patioId=${param.patioId}, lang='pt_BR')}">🇧🇷</a></li>
-                        <li><a th:href="@{/patio-leitor(patioId=${param.patioId}, lang='en_US')}">🏴</a></li>
+                        <li><a href="?lang=pt_BR">🇧🇷</a></li>
+                        <li><a href="?lang=en_US">🏴󠁧󠁢󠁥󠁮󠁧󠁿</a></li>
                     </ul>
                 </details>
             </li>
@@ -97,18 +97,104 @@
             <td th:text="${moto.servico}">Serviço</td>
             <td th:text="${moto.leitor != null ? moto.leitor.nome + ' (' + moto.leitor.patio.nome + ')' : '-'}">Leitor</td>
             <td>
-                <form method="post" th:action="@{'/moto/' + ${moto.idMoto}}">
+                <form method="post" th:action="@{'/moto/leitor-moto/' + ${moto.idMoto}}">
                     <input type="hidden" name="_method" value="DELETE" />
                     <button class="btn btn-error" th:text="#{delete}"></button>
                 </form>
             </td>
             <td>
-                <a th:href="@{'/moto/' + ${moto.idMoto} + '/edit'}" class="btn btn-secondary" th:text="#{edit}"></a>
+                <a th:href="@{'/moto/leitor-moto/' + ${moto.idMoto} + '/edit'}" class="btn btn-secondary" th:text="#{edit}"></a>
+            </td>
+            <td>
+                <button type="button"
+                        class="btn btn-accent movimentar-btn"
+                        th:attr="data-id=${moto.idMoto}"
+                        th:text="#{movimenting}">
+                </button>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
+<div id="movimentoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-96">
+        <h2 class="text-lg font-bold mb-4" th:text="#{select} + #{moviment}"></h2>
+
+        <form id="movimentoForm" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <input type="hidden" name="motoId" id="motoId" />
+
+            <select name="tipoMovimento" id="tipoMovimento" class="select select-bordered w-full mb-4">
+                <option value="" disabled selected th:text="#{select}"></option>
+                <option th:each="tm : ${tiposMovimento}"
+                        th:value="${tm}"
+                        th:text="${tm}"></option>
+            </select>
+
+            <div id="leitorSelect" class="hidden mb-4">
+                <label class="block mb-1" th:text="#{relocate}"></label>
+                <select name="novoLeitorId" id="novoLeitorId" class="select select-bordered w-full">
+                    <option value="" disabled selected th:text="#{select} + #{reader}"></option>
+                    <option th:each="l : ${leitores}"
+                            th:value="${l.idLeitor}"
+                            th:text="${l.nome + ' (' + l.patio.nome + ')'}"></option>
+                </select>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" class="btn" onclick="closeMovimentoModal()" th:text="#{cancel}"></button>
+                <button type="submit" class="btn btn-primary" th:text="#{save}"></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // vincula os botões "Movimentar"
+        document.querySelectorAll('.movimentar-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const motoId = this.dataset.id;
+                openMovimentoModal(motoId);
+            });
+        });
+
+        // pega elementos do modal
+        const tipoSelect = document.getElementById('tipoMovimento');
+        const leitorSelectDiv = document.getElementById('leitorSelect');
+        const movimentoForm = document.getElementById('movimentoForm');
+        const motoIdInput = document.getElementById('motoId');
+
+        window.openMovimentoModal = function (motoId) {
+            // reset visual
+            if (tipoSelect) tipoSelect.value = '';
+            if (leitorSelectDiv) leitorSelectDiv.classList.add('hidden');
+
+            document.getElementById('movimentoModal').classList.remove('hidden');
+            if (motoIdInput) motoIdInput.value = motoId;
+            if (movimentoForm) movimentoForm.action = '/movimento/registrar';
+        };
+
+        window.closeMovimentoModal = function () {
+            document.getElementById('movimentoModal').classList.add('hidden');
+        };
+
+        // mostrar/esconder leitorSelect só quando REALOCACAO selecionado
+        if (tipoSelect) {
+            tipoSelect.addEventListener('change', function () {
+                if (this.value === 'REALOCACAO') {
+                    leitorSelectDiv.classList.remove('hidden');
+                    // opcional: tornar required
+                    document.getElementById('novoLeitorId').required = true;
+                } else {
+                    leitorSelectDiv.classList.add('hidden');
+                    document.getElementById('novoLeitorId').required = false;
+                }
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

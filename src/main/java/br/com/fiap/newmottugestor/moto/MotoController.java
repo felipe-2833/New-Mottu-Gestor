@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -94,7 +95,11 @@ public class MotoController {
                 "Mottu E (elétrica)",
                 "Mottu Pop"
         );
+        List<TipoMovimento> tiposMovimento = Arrays.stream(TipoMovimento.values())
+                .filter(tm -> tm != TipoMovimento.ENTRADA)
+                .toList();
 
+        model.addAttribute("tiposMovimento", tiposMovimento);
         model.addAttribute("patioSelecionado", patio);
         model.addAttribute("modelos", modelos);
         model.addAttribute("leitores", leitores);
@@ -153,5 +158,51 @@ public class MotoController {
 
         redirect.addFlashAttribute("message", messageHelper.get("moto.update.success"));
         return "redirect:/moto";
+    }
+
+    @DeleteMapping("/leitor-moto/{id}")
+    public String deleteMotoLeitor(@PathVariable Long id, RedirectAttributes redirect ){
+        List<Movimento> movimentos = movimentoRepository.findByMotoIdMoto(id);
+        if (!movimentos.isEmpty()) {
+            movimentoRepository.deleteAll(movimentos);
+        }
+
+        Moto moto = motoService.getMoto(id);
+        Leitor leitor = moto.getLeitor();
+
+        motoService.deleteById(id);
+        redirect.addFlashAttribute("message", messageHelper.get("moto.delete.success"));
+        return "redirect:/moto/leitor-moto/"  + leitor.getIdLeitor();
+    }
+
+    @GetMapping("/leitor-moto/{id}/edit")
+    public String editMotoLeitor(@PathVariable Long id, Model model, @AuthenticationPrincipal OAuth2User user) {
+        List<String> modelos = List.of(
+                "Mottu Sport",
+                "Mottu Sport ESD",
+                "Mottu E (elétrica)",
+                "Mottu Pop"
+        );
+        List<Leitor> leitoresAtivos = leitorRepository.findByStatus(TipoStatus.ATIVO);
+        model.addAttribute("modelos", modelos);
+        model.addAttribute("leitores", leitoresAtivos);
+        Moto moto = motoService.getMoto(id);
+        model.addAttribute("moto", moto);
+        model.addAttribute("user", user);
+        return "form-moto-leitor";
+    }
+
+    @PostMapping("/leitor-moto/{id}")
+    public String updateMotoLeitor(@PathVariable Long id, @Valid Moto moto, BindingResult result, RedirectAttributes redirect) {
+        if (result.hasErrors()) {moto.setIdMoto(id); return "form-moto-leitor";}
+        Moto antigaMoto = motoService.getMoto(id);
+        Leitor leitor = antigaMoto.getLeitor();
+        moto.setIdMoto(id);
+        moto.setLeitor(leitor);
+        motoService.save(moto);
+
+        redirect.addFlashAttribute("message", messageHelper.get("moto.update.success"));
+        return "redirect:/moto/leitor-moto/" + leitor.getIdLeitor();
+
     }
 }
