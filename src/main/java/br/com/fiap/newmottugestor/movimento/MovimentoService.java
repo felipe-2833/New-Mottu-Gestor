@@ -21,20 +21,12 @@ public class MovimentoService {
         this.messageHelper = messageHelper;
     }
 
-    public List<Movimento> getAllMovimento(){
-        return movimentoRepository.findAll();
-    }
-
     public Movimento save(Movimento movimento) {
         return movimentoRepository.save(movimento);
     }
 
-    public void deleteById(Long id) {
-        movimentoRepository.delete(getMovimento(id));
-    }
-
     public List<Movimento> buscarComFiltros(Long patioId, Long leitorId, TipoMovimento tipo,
-                                            LocalDate data, String modelo) {
+                                            LocalDate data, String modelo, String placa) {
 
         List<Specification<Movimento>> specs = new ArrayList<>();
 
@@ -43,6 +35,7 @@ public class MovimentoService {
         if (tipo != null) specs.add(MovimentoSpecification.comTipo(tipo));
         if (data != null) specs.add(MovimentoSpecification.comData(data));
         if (modelo != null && !modelo.isBlank()) specs.add(MovimentoSpecification.comModelo(modelo));
+        if (placa != null && !placa.isBlank()) specs.add(MovimentoSpecification.comPlaca(placa));
 
         Specification<Movimento> finalSpec = specs.stream()
                 .reduce((s1, s2) -> s1.and(s2))

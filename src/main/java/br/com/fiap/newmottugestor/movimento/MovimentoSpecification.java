@@ -27,4 +27,9 @@ public class MovimentoSpecification {
         String pattern = "%" + modelo.toLowerCase() + "%";
         return (root, query, cb) -> cb.like(cb.lower(root.get("moto").get("modelo")), pattern);
     }
+
+    public static Specification<Movimento> comPlaca(String placa) {
+        String pattern2 = "%" + placa.toLowerCase() + "%";
+        return (root, query, cb) -> cb.like(cb.lower(root.get("moto").get("placa")), pattern2);
+    }
 }

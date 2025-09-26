@@ -2,14 +2,10 @@ package br.com.fiap.newmottugestor.Leitor;
 
 import br.com.fiap.newmottugestor.config.MessageHelper;
 import br.com.fiap.newmottugestor.enums.TipoStatus;
-import br.com.fiap.newmottugestor.moto.Moto;
-import br.com.fiap.newmottugestor.moto.MotoService;
 import br.com.fiap.newmottugestor.patio.Patio;
 import br.com.fiap.newmottugestor.patio.PatioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -26,12 +22,10 @@ import java.util.List;
 public class LeitorController {
     private final LeitorService leitorService;
     private final PatioService patioService;
-    private final MotoService motoService;
-    private final MessageSource messageSource;
     private final MessageHelper messageHelper;
 
     @GetMapping
-    public String index(@RequestParam(required = false) Long patioId, Model model, @AuthenticationPrincipal OAuth2User user){
+    public String index(@RequestParam(required = false) Long patioId, Model model, @AuthenticationPrincipal OAuth2User user) {
         if (patioId != null) {
             Patio patio = patioService.getPatio(patioId);
             List<Leitor> leitores = leitorService.getLeitorsByPatio(patioId);

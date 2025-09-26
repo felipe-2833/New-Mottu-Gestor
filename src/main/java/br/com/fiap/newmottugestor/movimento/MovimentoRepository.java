@@ -1,6 +1,5 @@
 package br.com.fiap.newmottugestor.movimento;
 
-import br.com.fiap.newmottugestor.moto.Moto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

@@ -115,49 +115,62 @@
             </td>
             <td th:if="${moto.leitor == null}">
                 <button type="button"
-                        class="btn btn-success"
-                        th:attr="onclick=|openEntradaModal(${moto.idMoto})|">
-                    Dar Entrada
+                        class="btn btn-success entrada-btn"
+                        th:attr="data-id=${moto.idMoto}"
+                        th:text="#{movimento.entry.title}">
                 </button>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
-<div id="entradaModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+<div id="entradaModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg w-96">
-        <h2 class="text-lg font-bold mb-4">Dar Entrada</h2>
+        <h2 class="text-lg font-bold mb-4" th:text="#{movimento.entry.title}"></h2>
 
         <form id="entradaForm" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <input type="hidden" name="motoId" id="entradaMotoId" />
 
-            <label>Selecione o leitor:</label>
+            <label th:text="#{select} + ' ' + #{reader} + ':'"></label>
             <select name="leitorId" class="select select-bordered w-full mb-4" required>
-                <option value="" disabled selected>Selecione...</option>
+                <option value="" disabled selected th:text="#{select}"></option>
                 <option th:each="l : ${leitores}"
                         th:value="${l.idLeitor}"
                         th:text="${l.nome + ' (' + l.patio.nome + ')'}"></option>
             </select>
 
             <div class="flex justify-end gap-2">
-                <button type="button" class="btn" onclick="closeEntradaModal()">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Confirmar</button>
+                <button type="button" class="btn" onclick="closeEntradaModal()" th:text="#{cancel}"></button>
+                <button type="submit" class="btn btn-primary" th:text="#{confirm}"></button>
             </div>
         </form>
     </div>
 </div>
 <script>
-    function openEntradaModal(motoId) {
-        document.getElementById("entradaModal").classList.remove("hidden");
-        document.getElementById("entradaMotoId").value = motoId;
-        document.getElementById("entradaForm").action = "/movimento/entrada";
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.entrada-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const motoId = this.dataset.id;
+                openEntradaModal(motoId);
+            });
+        });
 
-    function closeEntradaModal() {
-        document.getElementById("entradaModal").classList.add("hidden");
-    }
+        const entradaForm = document.getElementById('entradaForm');
+        const entradaMotoId = document.getElementById('entradaMotoId');
 
+        window.openEntradaModal = function(motoId) {
+            entradaMotoId.value = motoId;
+            entradaForm.action = '/movimento/entrada';
+            document.getElementById('entradaModal').classList.remove('hidden');
+        };
+
+        window.closeEntradaModal = function() {
+            document.getElementById('entradaModal').classList.add('hidden');
+        };
+    });
 </script>
+
 
 </body>
 </html>

@@ -58,8 +58,4 @@ public class MotoService {
                 () -> new EntityNotFoundException(messageHelper.get("moto.notfound"))
         );
     }
-
-    public List<Moto> buscarMotosPorPatio(Long patioId) {
-        return motoRepository.findByLeitorPatioIdPatio(patioId);
-    }
 }

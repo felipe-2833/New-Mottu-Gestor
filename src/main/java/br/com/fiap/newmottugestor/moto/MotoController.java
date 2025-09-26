@@ -9,10 +9,8 @@ import br.com.fiap.newmottugestor.enums.TipoStatus;
 import br.com.fiap.newmottugestor.movimento.Movimento;
 import br.com.fiap.newmottugestor.movimento.MovimentoRepository;
 import br.com.fiap.newmottugestor.patio.Patio;
-import br.com.fiap.newmottugestor.patio.PatioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -34,7 +32,6 @@ public class MotoController {
     private final MotoService motoService;
     private final LeitorRepository leitorRepository;
     private final LeitorService leitorService;
-    private final MessageSource messageSource;
     private final MessageHelper messageHelper;
     private final MovimentoRepository movimentoRepository;
 
@@ -115,15 +112,14 @@ public class MotoController {
         if(result.hasErrors()) return "form-moto";
         motoService.save(moto);
         redirect.addFlashAttribute("message", messageHelper.get("moto.create.success"));
-        return "redirect:/moto"; //301
+        return "redirect:/moto";
     }
 
     @DeleteMapping("{id}")
     public String delete(@PathVariable Long id, RedirectAttributes redirect ){
         List<Movimento> movimentos = movimentoRepository.findByMotoIdMoto(id);
         if (!movimentos.isEmpty()) {
-            // Tratar a lógica para esses movimentos, talvez removendo ou alterando a referência
-            movimentoRepository.deleteAll(movimentos); // Exemplo de deleção
+            movimentoRepository.deleteAll(movimentos);
         }
         motoService.deleteById(id);
         redirect.addFlashAttribute("message", messageHelper.get("moto.delete.success"));

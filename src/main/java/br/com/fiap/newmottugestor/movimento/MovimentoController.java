@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -41,10 +40,11 @@ public class MovimentoController {
                          @RequestParam(required = false) TipoMovimento tipo,
                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
                          @RequestParam(required = false) String modelo,
+                         @RequestParam(required = false) String placa,
                          @AuthenticationPrincipal OAuth2User user,
                          Model model) {
 
-        List<Movimento> movimentos = movimentoService.buscarComFiltros(patioId, leitorId, tipo, data, modelo);
+        List<Movimento> movimentos = movimentoService.buscarComFiltros(patioId, leitorId, tipo, data, modelo,  placa);
         List<String> modelos = List.of(
                 "Mottu Sport",
                 "Mottu Sport ESD",
