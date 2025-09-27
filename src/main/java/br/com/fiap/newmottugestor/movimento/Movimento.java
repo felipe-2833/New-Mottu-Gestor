@@ -5,6 +5,7 @@ import br.com.fiap.newmottugestor.Leitor.Leitor;
 import br.com.fiap.newmottugestor.enums.TipoMovimento;
 import br.com.fiap.newmottugestor.moto.Moto;
 import br.com.fiap.newmottugestor.patio.Patio;
+import br.com.fiap.newmottugestor.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -49,4 +50,7 @@ public class Movimento {
     @NotNull(message = "{movimento.tipomovimento.notnull}")
     @Enumerated(EnumType.STRING)
     private TipoMovimento tipoMovimento;
+
+    @ManyToOne
+    private User user;
 }

@@ -91,7 +91,7 @@
     <table class="table table-zebra">
         <thead>
         <tr>
-<!--            <th th:text="#{user}"></th>-->
+            <th th:text="#{user}"></th>
             <th th:text="#{datevent}"></th>
             <th th:text="#{plate}"></th>
             <th th:text="#{model}"></th>
@@ -104,7 +104,12 @@
         </thead>
         <tbody>
         <tr th:each="movimento : ${movimentos}">
-<!--            <td th:text="${movimento.moto?.servico}"></td>-->
+            <td>
+                <div th:if="${movimento.user != null}" class="w-10 rounded-full">
+                    <img alt="avatar do usuário" th:src="${movimento.user.avatarUrl}" />
+                </div>
+                <span th:if="${movimento.user == null}">-</span>
+            </td>
             <td th:text="${movimento.dataEvento}"></td>
             <td th:text="${movimento.moto?.placa}"></td>
             <td th:text="${movimento.moto?.modelo}"></td>

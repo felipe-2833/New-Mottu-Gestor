@@ -95,6 +95,7 @@ public class PatioSeeder {
                             .leitor(moto.getLeitor()) // pode ser null se for saída
                             .moto(moto)
                             .tipoMovimento(tipo)
+                            .user(null)
                             .build();
 
                     movimentos.add(movimento);

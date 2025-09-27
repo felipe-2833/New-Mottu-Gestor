@@ -10,6 +10,7 @@ import br.com.fiap.newmottugestor.moto.Moto;
 import br.com.fiap.newmottugestor.moto.MotoService;
 import br.com.fiap.newmottugestor.patio.Patio;
 import br.com.fiap.newmottugestor.patio.PatioService;
+import br.com.fiap.newmottugestor.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,7 +31,7 @@ public class MovimentoController {
     private final MovimentoService movimentoService;
     private final PatioService patioService;
     private final LeitorService leitorService;
-    private final LeitorRepository leitorRepository;
+    private final UserService userService;
     private final MotoService motoService;
     private final MessageHelper messageHelper;
 
@@ -59,7 +60,7 @@ public class MovimentoController {
 
         var patios = patioService.getAllPatio();
         var leitores = leitorService.getAllLeitor().stream()
-                .filter(l -> l.getStatus().equals(TipoStatus.ATIVO)) // só ativos
+                .filter(l -> l.getStatus().equals(TipoStatus.ATIVO))
                 .toList();
 
         model.addAttribute("patios", patios);
@@ -72,6 +73,7 @@ public class MovimentoController {
     public String registrarMovimento(@RequestParam Long motoId,
                                      @RequestParam TipoMovimento tipoMovimento,
                                      @RequestParam(required = false) Long novoLeitorId,
+                                     @AuthenticationPrincipal OAuth2User principal,
                                      RedirectAttributes redirect) {
 
         Moto moto = motoService.getMoto(motoId);
@@ -96,6 +98,9 @@ public class MovimentoController {
             motoService.save(moto);
         }
 
+        var user = userService.register(principal);
+        movimento.setUser(user);
+
         redirect.addFlashAttribute("message", messageHelper.get("movimento.create.success"));
         return "redirect:/moto/leitor-moto/" + leitorAtual.getIdLeitor();
     }
@@ -103,6 +108,7 @@ public class MovimentoController {
     @PostMapping("/entrada")
     public String darEntrada(@RequestParam Long motoId,
                              @RequestParam Long leitorId,
+                             @AuthenticationPrincipal OAuth2User principal,
                              RedirectAttributes redirect) {
 
         Moto moto = motoService.getMoto(motoId);
@@ -119,6 +125,9 @@ public class MovimentoController {
         movimentoService.save(movimento);
         moto.setLeitor(novoLeitor);
         motoService.save(moto);
+
+        var user = userService.register(principal);
+        movimento.setUser(user);
 
         redirect.addFlashAttribute("message", messageHelper.get("moto.create.success"));
         return "redirect:/moto";
