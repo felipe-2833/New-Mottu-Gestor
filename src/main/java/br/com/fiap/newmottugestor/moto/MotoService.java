@@ -1,7 +1,9 @@
 package br.com.fiap.newmottugestor.moto;
 
 import br.com.fiap.newmottugestor.Leitor.Leitor;
+import br.com.fiap.newmottugestor.Leitor.LeitorService;
 import br.com.fiap.newmottugestor.config.MessageHelper;
+import br.com.fiap.newmottugestor.movimento.Movimento;
 import br.com.fiap.newmottugestor.movimento.MovimentoSpecification;
 import br.com.fiap.newmottugestor.patio.Patio;
 import br.com.fiap.newmottugestor.patio.PatioService;
@@ -20,11 +22,13 @@ public class MotoService {
     private final MotoRepository motoRepository;
     private final PatioService patioService;
     private final MessageHelper messageHelper;
+    private final LeitorService leitorService;
 
-    public MotoService(MotoRepository motoRepository, MessageHelper messageHelper, PatioService patioService) {
+    public MotoService(MotoRepository motoRepository, MessageHelper messageHelper, PatioService patioService, LeitorService leitorService) {
         this.motoRepository = motoRepository;
         this.messageHelper = messageHelper;
         this.patioService = patioService;
+        this.leitorService = leitorService;
     }
 
     public List<Moto> getAllMoto() {
@@ -59,6 +63,11 @@ public class MotoService {
 
         return motoRepository.findAll(finalSpec, Sort.by(Sort.Direction.DESC, "idMoto"));
 
+    }
+
+    public List<Moto> getMotosByLeitor(Long leitorId) {
+        Leitor leitor = leitorService.getLeitor(leitorId);
+        return motoRepository.findByLeitor(leitor);
     }
 
 

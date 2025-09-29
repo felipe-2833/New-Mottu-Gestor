@@ -1,7 +1,14 @@
 package br.com.fiap.newmottugestor.patio;
 
+import br.com.fiap.newmottugestor.Leitor.Leitor;
+import br.com.fiap.newmottugestor.Leitor.LeitorRepository;
+import br.com.fiap.newmottugestor.Leitor.LeitorService;
 import br.com.fiap.newmottugestor.config.MessageHelper;
+import br.com.fiap.newmottugestor.moto.Moto;
 import br.com.fiap.newmottugestor.moto.MotoService;
+import br.com.fiap.newmottugestor.movimento.Movimento;
+import br.com.fiap.newmottugestor.movimento.MovimentoRepository;
+import br.com.fiap.newmottugestor.movimento.MovimentoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -14,13 +21,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/patio")
 @RequiredArgsConstructor
 public class PatioController {
 
     private final PatioService patioService;
-    private final MessageSource messageSource;
+    private final MovimentoService movimentoService;
+    private final MovimentoRepository  movimentoRepository;
+    private final LeitorService leitorService;
+    private final LeitorRepository  leitorRepository;
     private final MessageHelper messageHelper;
     private final MotoService motoService;
 
@@ -52,6 +64,19 @@ public class PatioController {
 
     @DeleteMapping("{id}")
     public String delete(@PathVariable Long id, RedirectAttributes redirect ){
+        List<Moto> motos = motoService.getMotosByPatio(id);
+        if (!motos.isEmpty()) {
+            redirect.addFlashAttribute("message", messageHelper.get("patio.delete.denaid"));
+            return "redirect:/patio";
+        }
+        List<Movimento> movimentos = movimentoService.getMovimentosByPatio(id);
+        if (!movimentos.isEmpty()) {
+            movimentoRepository.deleteAll(movimentos);
+        }
+        List<Leitor> leitores = leitorService.getLeitorsByPatio(id);
+        if (!leitores.isEmpty()) {
+            leitorRepository.deleteAll(leitores);
+        }
         patioService.deleteById(id);
         redirect.addFlashAttribute("message", messageHelper.get("patio.delete.success"));
         return "redirect:/patio";

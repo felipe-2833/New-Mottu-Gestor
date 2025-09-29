@@ -1,4 +1,6 @@
 package br.com.fiap.newmottugestor.movimento;
+import br.com.fiap.newmottugestor.Leitor.Leitor;
+import br.com.fiap.newmottugestor.Leitor.LeitorService;
 import br.com.fiap.newmottugestor.config.MessageHelper;
 import br.com.fiap.newmottugestor.enums.TipoMovimento;
 import br.com.fiap.newmottugestor.moto.Moto;
@@ -19,11 +21,13 @@ public class MovimentoService {
     private final MovimentoRepository movimentoRepository;
     private final PatioService patioService;
     private final MessageHelper messageHelper;
+    private final LeitorService leitorService;
 
-    public MovimentoService(MovimentoRepository movimentoRepository, MessageHelper messageHelper, PatioService patioService) {
+    public MovimentoService(MovimentoRepository movimentoRepository, MessageHelper messageHelper, PatioService patioService, LeitorService leitorService) {
         this.movimentoRepository = movimentoRepository;
         this.messageHelper = messageHelper;
         this.patioService = patioService;
+        this.leitorService = leitorService;
     }
 
     public Movimento save(Movimento movimento) {
@@ -61,6 +65,11 @@ public class MovimentoService {
     public List<Movimento> getMovimentosByPatio(Long patioId) {
         Patio patio = patioService.getPatio(patioId);
         return movimentoRepository.findByPatio(patio);
+    }
+
+    public List<Movimento> getMovimentosByLeitor(Long leitorId) {
+        Leitor leitor = leitorService.getLeitor(leitorId);
+        return movimentoRepository.findByLeitor(leitor);
     }
 
 

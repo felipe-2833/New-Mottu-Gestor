@@ -5,6 +5,7 @@ import br.com.fiap.newmottugestor.enums.TipoStatus;
 import br.com.fiap.newmottugestor.moto.Moto;
 import br.com.fiap.newmottugestor.moto.MotoService;
 import br.com.fiap.newmottugestor.movimento.Movimento;
+import br.com.fiap.newmottugestor.movimento.MovimentoRepository;
 import br.com.fiap.newmottugestor.movimento.MovimentoService;
 import br.com.fiap.newmottugestor.patio.Patio;
 import br.com.fiap.newmottugestor.patio.PatioService;
@@ -26,6 +27,7 @@ import java.util.List;
 public class LeitorController {
     private final LeitorService leitorService;
     private final MovimentoService movimentoService;
+    private final MovimentoRepository movimentoRepository;
     private final MotoService motoService;
     private final PatioService patioService;
     private final MessageHelper messageHelper;
@@ -79,9 +81,20 @@ public class LeitorController {
 
     @DeleteMapping("{id}")
     public String delete(@PathVariable Long id, RedirectAttributes redirect, @RequestParam Long patioId ){
-        leitorService.deleteById(id);
-        redirect.addAttribute("patioId", patioId);
-        redirect.addFlashAttribute("message", messageHelper.get("leitor.delete.success"));
+        List<Moto> motos = motoService.getMotosByLeitor(id);
+        if (!motos.isEmpty()) {
+            redirect.addFlashAttribute("message", messageHelper.get("leitor.delete.denaid"));
+            return "redirect:/patio-leitor?patioId=" + patioId;
+        }
+        else{
+            List<Movimento> movimentos = movimentoService.getMovimentosByLeitor(id);
+            if (!movimentos.isEmpty()) {
+                movimentoRepository.deleteAll(movimentos);
+            }
+            leitorService.deleteById(id);
+            redirect.addAttribute("patioId", patioId);
+            redirect.addFlashAttribute("message", messageHelper.get("leitor.delete.success"));
+        }
         return "redirect:/patio-leitor";
     }
 
