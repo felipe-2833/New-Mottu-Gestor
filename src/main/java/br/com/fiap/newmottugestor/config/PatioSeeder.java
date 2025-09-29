@@ -111,7 +111,14 @@ public class PatioSeeder {
         }
 
         List<Leitor> leitoresSalvos = leitorRepository.saveAll(leitores);
-        motoRepository.saveAll(motos);
+        List<Moto> motosSalvos = motoRepository.saveAll(motos);
+
+        for(Movimento m : movimentos){
+            m.setLeitor(m.getLeitor() != null ? leitoresSalvos.get(leitores.indexOf(m.getLeitor())) : null);
+            m.setMoto(motosSalvos.get(motos.indexOf(m.getMoto())));
+            m.setPatio(m.getLeitor() != null ? m.getLeitor().getPatio() : m.getPatio());
+        }
+
         movimentoRepository.saveAll(movimentos);
 
         System.out.println("Seeder de Pátios, Leitores e Motos finalizado!");

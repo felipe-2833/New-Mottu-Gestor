@@ -15,7 +15,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests( auth -> auth
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(login -> login.defaultSuccessUrl("/patio"))
                 .build();
     }
 }
