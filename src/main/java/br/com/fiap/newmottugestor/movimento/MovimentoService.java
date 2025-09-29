@@ -1,6 +1,9 @@
 package br.com.fiap.newmottugestor.movimento;
 import br.com.fiap.newmottugestor.config.MessageHelper;
 import br.com.fiap.newmottugestor.enums.TipoMovimento;
+import br.com.fiap.newmottugestor.moto.Moto;
+import br.com.fiap.newmottugestor.patio.Patio;
+import br.com.fiap.newmottugestor.patio.PatioService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,11 +17,13 @@ import java.util.List;
 public class MovimentoService {
 
     private final MovimentoRepository movimentoRepository;
+    private final PatioService patioService;
     private final MessageHelper messageHelper;
 
-    public MovimentoService(MovimentoRepository movimentoRepository, MessageHelper messageHelper) {
+    public MovimentoService(MovimentoRepository movimentoRepository, MessageHelper messageHelper, PatioService patioService) {
         this.movimentoRepository = movimentoRepository;
         this.messageHelper = messageHelper;
+        this.patioService = patioService;
     }
 
     public Movimento save(Movimento movimento) {
@@ -47,6 +52,15 @@ public class MovimentoService {
                         .and(Sort.by(Sort.Direction.DESC, "idMoviment"))
         );
 
+    }
+
+    public List<Movimento> getUltimosMovimentosPorPatio(Long patioId) {
+        return movimentoRepository.findTop5ByPatioIdPatioOrderByDataEventoDescIdMovimentDesc(patioId);
+    }
+
+    public List<Movimento> getMovimentosByPatio(Long patioId) {
+        Patio patio = patioService.getPatio(patioId);
+        return movimentoRepository.findByPatio(patio);
     }
 
 

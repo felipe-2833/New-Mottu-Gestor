@@ -3,6 +3,8 @@ package br.com.fiap.newmottugestor.moto;
 import br.com.fiap.newmottugestor.Leitor.Leitor;
 import br.com.fiap.newmottugestor.config.MessageHelper;
 import br.com.fiap.newmottugestor.movimento.MovimentoSpecification;
+import br.com.fiap.newmottugestor.patio.Patio;
+import br.com.fiap.newmottugestor.patio.PatioService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,11 +18,13 @@ import java.util.List;
 public class MotoService {
 
     private final MotoRepository motoRepository;
+    private final PatioService patioService;
     private final MessageHelper messageHelper;
 
-    public MotoService(MotoRepository motoRepository, MessageHelper messageHelper) {
+    public MotoService(MotoRepository motoRepository, MessageHelper messageHelper, PatioService patioService) {
         this.motoRepository = motoRepository;
         this.messageHelper = messageHelper;
+        this.patioService = patioService;
     }
 
     public List<Moto> getAllMoto() {
@@ -33,6 +37,11 @@ public class MotoService {
 
     public void deleteById(Long id) {
         motoRepository.delete(getMoto(id));
+    }
+
+    public List<Moto> getMotosByPatio(Long patioId) {
+        Patio patio = patioService.getPatio(patioId);
+        return motoRepository.findByLeitorPatio(patio);
     }
 
     public List<Moto> buscarComFiltros(Long leitorId, LocalDate data, String modelo, String placa) {

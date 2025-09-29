@@ -88,7 +88,6 @@ public class MovimentoController {
                 .tipoMovimento(tipoMovimento)
                 .build();
 
-        movimentoService.save(movimento);
         moto.setLeitor(null);
         motoService.save(moto);
 
@@ -101,6 +100,7 @@ public class MovimentoController {
         var user = userService.register(principal);
         movimento.setUser(user);
 
+        movimentoService.save(movimento);
         redirect.addFlashAttribute("message", messageHelper.get("movimento.create.success"));
         return "redirect:/moto/leitor-moto/" + leitorAtual.getIdLeitor();
     }
@@ -122,12 +122,12 @@ public class MovimentoController {
                 .tipoMovimento(TipoMovimento.ENTRADA)
                 .build();
 
-        movimentoService.save(movimento);
         moto.setLeitor(novoLeitor);
         motoService.save(moto);
 
         var user = userService.register(principal);
         movimento.setUser(user);
+        movimentoService.save(movimento);
 
         redirect.addFlashAttribute("message", messageHelper.get("moto.create.success"));
         return "redirect:/moto";

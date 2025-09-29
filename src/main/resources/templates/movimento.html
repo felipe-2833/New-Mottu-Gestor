@@ -106,7 +106,7 @@
         <tr th:each="movimento : ${movimentos}">
             <td>
                 <div th:if="${movimento.user != null}" class="w-10 rounded-full">
-                    <img alt="avatar do usuário" th:src="${movimento.user.avatarUrl}" />
+                    <img class="w-10 h-10 rounded-full object-cover" alt="avatar do usuário" th:src="${movimento.user.avatarUrl}" />
                 </div>
                 <span th:if="${movimento.user == null}">-</span>
             </td>
