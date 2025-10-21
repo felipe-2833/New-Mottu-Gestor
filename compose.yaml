@@ -1,9 +1,0 @@
-services:
-  postgres:
-    image: 'postgres:latest'
-    environment:
-      - 'POSTGRES_DB=moto'
-      - 'POSTGRES_PASSWORD=moto'
-      - 'POSTGRES_USER=moto'
-    ports:
-      - '5432'

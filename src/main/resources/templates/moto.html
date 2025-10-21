@@ -18,7 +18,7 @@
         <ul class="menu menu-horizontal px-1">
             <li><a href="/moto" th:text="#{moto}"></a></li>
             <li><a href="/patio" th:text="#{patio}"></a></li>
-            <li><a href="/movimento" th:text="#{moviment}"></a></li>
+            <li><a href="/movimentacaoDocument" th:text="#{moviment}"></a></li>
         </ul>
     </div>
 
@@ -117,7 +117,7 @@
                 <button type="button"
                         class="btn btn-success entrada-btn"
                         th:attr="data-id=${moto.idMoto}"
-                        th:text="#{movimento.entry.title}">
+                        th:text="#{movimentacaoDocument.entry.title}">
                 </button>
             </td>
         </tr>
@@ -126,7 +126,7 @@
 </div>
 <div id="entradaModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg w-96">
-        <h2 class="text-lg font-bold mb-4" th:text="#{movimento.entry.title}"></h2>
+        <h2 class="text-lg font-bold mb-4" th:text="#{movimentacaoDocument.entry.title}"></h2>
 
         <form id="entradaForm" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -161,7 +161,7 @@
 
         window.openEntradaModal = function(motoId) {
             entradaMotoId.value = motoId;
-            entradaForm.action = '/movimento/entrada';
+            entradaForm.action = '/movimentacaoDocument/entrada';
             document.getElementById('entradaModal').classList.remove('hidden');
         };
 

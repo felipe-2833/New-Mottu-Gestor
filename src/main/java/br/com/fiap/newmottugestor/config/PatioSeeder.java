@@ -1,15 +1,15 @@
 package br.com.fiap.newmottugestor.config;
 
-import br.com.fiap.newmottugestor.Leitor.Leitor;
-import br.com.fiap.newmottugestor.Leitor.LeitorRepository;
+import br.com.fiap.newmottugestor.oracle.model.Leitor;
+import br.com.fiap.newmottugestor.oracle.repository.LeitorRepository;
 import br.com.fiap.newmottugestor.enums.TipoMovimento;
 import br.com.fiap.newmottugestor.enums.TipoStatus;
-import br.com.fiap.newmottugestor.moto.Moto;
-import br.com.fiap.newmottugestor.moto.MotoRepository;
-import br.com.fiap.newmottugestor.movimento.Movimento;
-import br.com.fiap.newmottugestor.movimento.MovimentoRepository;
-import br.com.fiap.newmottugestor.patio.Patio;
-import br.com.fiap.newmottugestor.patio.PatioRepository;
+import br.com.fiap.newmottugestor.oracle.model.Moto;
+import br.com.fiap.newmottugestor.oracle.repository.MotoRepository;
+import br.com.fiap.newmottugestor.mongo.model.MovimentacaoDocument;
+import br.com.fiap.newmottugestor.oracle.repository.MovimentoRepository;
+import br.com.fiap.newmottugestor.oracle.model.Patio;
+import br.com.fiap.newmottugestor.oracle.repository.PatioRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -57,7 +57,7 @@ public class PatioSeeder {
 
         List<Leitor> leitores = new ArrayList<>();
         List<Moto> motos = new ArrayList<>();
-        List<Movimento> movimentos = new ArrayList<>();
+        List<MovimentacaoDocument> movimentacaoDocuments = new ArrayList<>();
 
         int motoCount = 1;
 
@@ -89,7 +89,7 @@ public class PatioSeeder {
                     TipoMovimento tipo = TipoMovimento.values()[new Random().nextInt(TipoMovimento.values().length)];
 
                     // Criar a movimentação
-                    Movimento movimento = Movimento.builder()
+                    MovimentacaoDocument movimentacaoDocument = MovimentacaoDocument.builder()
                             .dataEvento(LocalDate.now().minusDays(new Random().nextInt(30))) // data aleatória nos últimos 30 dias
                             .patio(leitor.getPatio())
                             .leitor(moto.getLeitor()) // pode ser null se for saída
@@ -98,7 +98,7 @@ public class PatioSeeder {
                             .user(null)
                             .build();
 
-                    movimentos.add(movimento);
+                    movimentacaoDocuments.add(movimentacaoDocument);
 
                     // Se o movimento for de saída, manutenção ou vistoria -> remove leitor
                     if (tipo == TipoMovimento.SAIDA || tipo == TipoMovimento.MANUTENCAO || tipo == TipoMovimento.VISTORIA) {
@@ -113,13 +113,13 @@ public class PatioSeeder {
         List<Leitor> leitoresSalvos = leitorRepository.saveAll(leitores);
         List<Moto> motosSalvos = motoRepository.saveAll(motos);
 
-        for(Movimento m : movimentos){
+        for(MovimentacaoDocument m : movimentacaoDocuments){
             m.setLeitor(m.getLeitor() != null ? leitoresSalvos.get(leitores.indexOf(m.getLeitor())) : null);
             m.setMoto(motosSalvos.get(motos.indexOf(m.getMoto())));
             m.setPatio(m.getLeitor() != null ? m.getLeitor().getPatio() : m.getPatio());
         }
 
-        movimentoRepository.saveAll(movimentos);
+        movimentoRepository.saveAll(movimentacaoDocuments);
 
         System.out.println("Seeder de Pátios, Leitores e Motos finalizado!");
     }

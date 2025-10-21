@@ -19,7 +19,7 @@
         <ul class="menu menu-horizontal px-1">
             <li><a href="/moto" th:text="#{moto}"></a></li>
             <li><a href="/patio" th:text="#{patio}"></a></li>
-            <li><a href="/movimento" th:text="#{moviment}"></a></li>
+            <li><a href="/movimentacaoDocument" th:text="#{moviment}"></a></li>
         </ul>
     </div>
 
@@ -132,7 +132,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="m : ${ultimosMovimentos}">
+            <tr th:each="m : ${ultimosMovimentacaoDocuments}">
                 <td th:text="${m.dataEvento}"></td>
                 <td th:text="${m.moto?.placa}"></td>
                 <td th:text="${m.moto?.modelo}"></td>
@@ -173,7 +173,7 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     const motos = /*[[${motos}]]*/ [];
-    const movimentos = /*[[${movimentosPatio}]]*/ [];
+    const movimentacaoDocuments = /*[[${movimentosPatio}]]*/ [];
     const msgTotalMotos = /*[[#{moto.total}]]*/ ' ';
     const msgTotalEntradas = /*[[#{mov.checkin}]]*/ ' ';
     const msgTotalSaidas = /*[[#{mov.exit}]]*/' ';
@@ -189,7 +189,7 @@
         return acc;
     }, {});
 
-    const movimentosUltimoMes = movimentos.filter(m => {
+    const movimentosUltimoMes = movimentacaoDocuments.filter(m => {
         const data = new Date(m.dataEvento + "T00:00:00");
         return data >= primeiroDiaMes && data <= ultimoDiaMes;
     });

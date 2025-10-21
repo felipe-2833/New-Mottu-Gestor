@@ -1,6 +1,6 @@
 package br.com.fiap.newmottugestor.auth;
 
-import br.com.fiap.newmottugestor.user.UserService;
+import br.com.fiap.newmottugestor.service.UserService;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.oauth2.core.user.OAuth2User;
