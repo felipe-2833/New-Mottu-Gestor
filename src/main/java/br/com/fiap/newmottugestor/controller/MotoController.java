@@ -1,6 +1,5 @@
 package br.com.fiap.newmottugestor.controller;
 
-import br.com.fiap.newmottugestor.mongo.model.MovimentacaoDocument;
 import br.com.fiap.newmottugestor.mongo.repository.MovimentacaoDocumentRepository;
 import br.com.fiap.newmottugestor.oracle.model.Leitor;
 import br.com.fiap.newmottugestor.oracle.repository.LeitorRepository;
@@ -10,7 +9,6 @@ import br.com.fiap.newmottugestor.config.MessageHelper;
 import br.com.fiap.newmottugestor.enums.TipoMovimento;
 import br.com.fiap.newmottugestor.enums.TipoStatus;
 import br.com.fiap.newmottugestor.oracle.model.Moto;
-import br.com.fiap.newmottugestor.oracle.repository.MovimentoRepository;
 import br.com.fiap.newmottugestor.oracle.model.Patio;
 import br.com.fiap.newmottugestor.service.MotoService;
 import jakarta.validation.Valid;
@@ -23,6 +21,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -43,8 +45,12 @@ public class MotoController {
     @GetMapping
     public String index(@RequestParam(required = false) Long leitorId,
                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
-                        @RequestParam(required = false) String modelo,@RequestParam(required = false) String placa, Model model, @AuthenticationPrincipal OAuth2User user) {
-        List<Moto> motos = motoService.buscarComFiltros(leitorId, data, modelo, placa);
+                        @RequestParam(required = false) String modelo,
+                        @RequestParam(required = false) String placa,
+                        @PageableDefault(size = 50, sort = "idMoto", direction = Sort.Direction.DESC) Pageable pageable,
+                        Model model, @AuthenticationPrincipal OAuth2User user) {
+
+        Page<Moto> motoPage = motoService.buscarComFiltros(leitorId, data, modelo, placa, pageable);
         var leitores = leitorService.getAllLeitor().stream()
                 .filter(l -> l.getStatus().equals(TipoStatus.ATIVO))
                 .toList();
@@ -56,8 +62,9 @@ public class MotoController {
         );
         model.addAttribute("modelos", modelos);
         model.addAttribute("leitores", leitores);
-        model.addAttribute("motos", motos);
+        model.addAttribute("motoPage", motoPage);
         model.addAttribute("user", user);
+
         return "moto";
     }
 
@@ -82,15 +89,16 @@ public class MotoController {
                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
                              @RequestParam(required = false) String modelo,
                              @RequestParam(required = false) String placa,
+                             @PageableDefault(size = 50, sort = "idMoto", direction = Sort.Direction.DESC) Pageable pageable,
                              Model model, @AuthenticationPrincipal OAuth2User user) {
+
         Leitor leitor = leitorService.getLeitor(leitorId);
         Patio patio = leitor.getPatio();
-        List<Moto> motos = motoService.buscarComFiltros(leitorId, data, modelo, placa);
+        Page<Moto> motoPage = motoService.buscarComFiltros(leitorId, data, modelo, placa, pageable);
 
         var leitores = leitorService.getAllLeitor().stream()
                 .filter(l -> l.getStatus().equals(TipoStatus.ATIVO))
                 .toList();
-
         List<String> modelos = List.of(
                 "Mottu Sport",
                 "Mottu Sport ESD",
@@ -100,13 +108,13 @@ public class MotoController {
         List<TipoMovimento> tiposMovimento = Arrays.stream(TipoMovimento.values())
                 .filter(tm -> tm != TipoMovimento.ENTRADA)
                 .toList();
-
         model.addAttribute("tiposMovimento", tiposMovimento);
         model.addAttribute("patioSelecionado", patio);
         model.addAttribute("modelos", modelos);
         model.addAttribute("leitores", leitores);
-        model.addAttribute("motos", motos);
+        model.addAttribute("motoPage", motoPage);
         model.addAttribute("user", user);
+        model.addAttribute("leitorId", leitorId);
 
         return "leitor-moto";
     }
@@ -122,7 +130,7 @@ public class MotoController {
 
     @DeleteMapping("{id}")
     public String delete(@PathVariable Long id, RedirectAttributes redirect ){
-        logRepo.deleteByMotoId(id);
+        logRepo.deleteByMoto_IdMoto(id);
         mongoRepo.deleteAllByIdMotoOracle(id);
         motoService.deleteById(id);
 
@@ -162,7 +170,7 @@ public class MotoController {
 
     @DeleteMapping("/leitor-moto/{id}")
     public String deleteMotoLeitor(@PathVariable Long id, RedirectAttributes redirect ){
-        logRepo.deleteByMotoId(id);
+        logRepo.deleteByMoto_IdMoto(id);
         mongoRepo.deleteAllByIdMotoOracle(id);
         Moto moto = motoService.getMoto(id);
         Leitor leitor = moto.getLeitor();

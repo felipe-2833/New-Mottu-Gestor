@@ -8,7 +8,6 @@ import br.com.fiap.newmottugestor.oracle.model.Moto;
 import br.com.fiap.newmottugestor.oracle.model.Patio;
 import br.com.fiap.newmottugestor.service.MotoService;
 import br.com.fiap.newmottugestor.mongo.model.MovimentacaoDocument;
-import br.com.fiap.newmottugestor.oracle.repository.MovimentoRepository;
 import br.com.fiap.newmottugestor.service.MovimentoService;
 import br.com.fiap.newmottugestor.service.PatioService;
 import jakarta.validation.Valid;
@@ -30,7 +29,6 @@ public class PatioController {
 
     private final PatioService patioService;
     private final MovimentoService movimentoService;
-    private final MovimentoRepository  movimentoRepository;
     private final LeitorService leitorService;
     private final LeitorRepository  leitorRepository;
     private final MessageHelper messageHelper;
@@ -71,7 +69,7 @@ public class PatioController {
         }
         List<MovimentacaoDocument> movimentacaoDocuments = movimentoService.getMovimentosByPatio(id);
         if (!movimentacaoDocuments.isEmpty()) {
-            movimentoRepository.deleteAll(movimentacaoDocuments);
+            movimentoService.deleteAll(movimentacaoDocuments);
         }
         List<Leitor> leitores = leitorService.getLeitorsByPatio(id);
         if (!leitores.isEmpty()) {

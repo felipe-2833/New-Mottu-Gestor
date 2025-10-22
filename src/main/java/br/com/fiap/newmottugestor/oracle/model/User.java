@@ -1,6 +1,8 @@
 package br.com.fiap.newmottugestor.oracle.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -9,6 +11,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 @Data
 @Table(name = "mottuser")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

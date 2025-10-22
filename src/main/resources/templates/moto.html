@@ -18,7 +18,7 @@
         <ul class="menu menu-horizontal px-1">
             <li><a href="/moto" th:text="#{moto}"></a></li>
             <li><a href="/patio" th:text="#{patio}"></a></li>
-            <li><a href="/movimentacaoDocument" th:text="#{moviment}"></a></li>
+            <li><a href="/movimento" th:text="#{moviment}"></a></li>
         </ul>
     </div>
 
@@ -97,12 +97,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="moto: ${motos}">
+        <tr th:each="moto: ${motoPage.content}">
             <td th:text="${moto.placa}">Placa</td>
             <td th:text="${moto.modelo}">Modelo</td>
             <td th:text="${moto.rfid_tag}">RFID</td>
-            <td th:text="${moto.dataCadastro}">Data</td>
-            <td th:text="${moto.servico}">Serviço</td>
+            <td th:text="${#temporals.format(moto.dataCadastro, 'dd/MM/yyyy')}">Data</td> <td th:text="${moto.servico}">Serviço</td>
             <td th:text="${moto.leitor != null ? moto.leitor.nome + ' (' + moto.leitor.patio.nome + ')' : '-'}">Leitor</td>
             <td>
                 <form method="post" th:action="@{'/moto/' + ${moto.idMoto}}">
@@ -123,6 +122,17 @@
         </tr>
         </tbody>
     </table>
+</div>
+<div class="join m-4 flex justify-center" th:if="${motoPage.totalPages > 1}">
+    <a th:href="@{/moto(page=${motoPage.number - 1}, size=${motoPage.size}, placa=${param.placa}, modelo=${param.modelo}, data=${param.data}, leitorId=${param.leitorId})}"
+       th:classappend="${motoPage.first} ? 'btn-disabled'"
+       class="join-item btn">«</a>
+
+    <button class="join-item btn" th:text="${motoPage.number + 1}"></button>
+
+    <a th:href="@{/moto(page=${motoPage.number + 1}, size=${motoPage.size}, placa=${param.placa}, modelo=${param.modelo}, data=${param.data}, leitorId=${param.leitorId})}"
+       th:classappend="${motoPage.last} ? 'btn-disabled'"
+       class="join-item btn">»</a>
 </div>
 <div id="entradaModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg w-96">
@@ -161,7 +171,7 @@
 
         window.openEntradaModal = function(motoId) {
             entradaMotoId.value = motoId;
-            entradaForm.action = '/movimentacaoDocument/entrada';
+            entradaForm.action = '/movimento/entrada';
             document.getElementById('entradaModal').classList.remove('hidden');
         };
 

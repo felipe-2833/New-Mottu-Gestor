@@ -17,6 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,29 +44,31 @@ public class MovimentoController {
                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
                         @RequestParam(required = false) String modelo,
                         @RequestParam(required = false) String placa,
+                        @PageableDefault(size = 50, sort = {"dataEvento", "id"}, direction = Sort.Direction.DESC) Pageable pageable,
                         @AuthenticationPrincipal OAuth2User user,
                         Model model) {
 
-        List<MovimentacaoDocument> movimentacaoDocuments = movimentoService.buscarComFiltros(patioId, leitorId, tipo, data, modelo, placa);
+        Page<MovimentacaoDocument> movimentoPage = movimentoService.buscarComFiltros(
+                patioId, leitorId, tipo, data, modelo, placa, pageable // Passa o pageable
+        );
         List<String> modelos = List.of(
                 "Mottu Sport",
                 "Mottu Sport ESD",
                 "Mottu E (elétrica)",
                 "Mottu Pop"
         );
-
-        model.addAttribute("modelos", modelos);
-        model.addAttribute("movimentos", movimentacaoDocuments);
-        model.addAttribute("tipos", TipoMovimento.values());
-
         var patios = patioService.getAllPatio();
         var leitores = leitorService.getAllLeitor().stream()
                 .filter(l -> l.getStatus().equals(TipoStatus.ATIVO))
                 .toList();
 
+        model.addAttribute("modelos", modelos);
+        model.addAttribute("movimentoPage", movimentoPage);
+        model.addAttribute("tipos", TipoMovimento.values());
         model.addAttribute("patios", patios);
         model.addAttribute("leitores", leitores);
         model.addAttribute("user", user);
+
         return "movimento";
     }
 
@@ -94,8 +100,6 @@ public class MovimentoController {
             moto.setLeitor(novoLeitor);
             motoService.save(moto);
         }
-
-        // 4. Redirecionar
         redirect.addFlashAttribute("message", messageHelper.get("movimento.create.success"));
         return "redirect:/moto/leitor-moto/" + leitorAtual.getIdLeitor();
     }
@@ -122,7 +126,7 @@ public class MovimentoController {
         moto.setLeitor(novoLeitor);
         motoService.save(moto);
 
-        redirect.addFlashAttribute("message", messageHelper.get("moto.create.success"));
+        redirect.addFlashAttribute("message", messageHelper.get("movimento.create.success"));
         return "redirect:/moto";
     }
 }

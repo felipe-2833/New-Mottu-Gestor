@@ -10,6 +10,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -47,21 +49,19 @@ public class MotoService {
         return motoRepository.findByLeitorPatio(patio);
     }
 
-    public List<Moto> buscarComFiltros(Long leitorId, LocalDate data, String modelo, String placa) {
+    public Page<Moto> buscarComFiltros(Long leitorId, LocalDate data, String modelo, String placa,
+                                       Pageable pageable) {
 
         List<Specification<Moto>> specs = new ArrayList<>();
-
         if (leitorId != null) specs.add(MotoSpecification.comLeitor(leitorId));
         if (data != null) specs.add(MotoSpecification.comData(data));
         if (modelo != null && !modelo.isBlank()) specs.add(MotoSpecification.comModelo(modelo));
         if (placa != null && !placa.isBlank()) specs.add(MotoSpecification.comPlaca(placa));
 
         Specification<Moto> finalSpec = specs.stream()
-                .reduce((s1, s2) -> s1.and(s2))
+                .reduce(Specification::and)
                 .orElse((root, query, cb) -> cb.conjunction());
-
-        return motoRepository.findAll(finalSpec, Sort.by(Sort.Direction.DESC, "idMoto"));
-
+        return motoRepository.findAll(finalSpec, pageable);
     }
 
     public List<Moto> getMotosByLeitor(Long leitorId) {

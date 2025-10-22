@@ -18,7 +18,7 @@
         <ul class="menu menu-horizontal px-1">
             <li><a href="/moto" th:text="#{moto}"></a></li>
             <li><a href="/patio" th:text="#{patio}"></a></li>
-            <li><a href="/movimentacaoDocument" th:text="#{moviment}"></a></li>
+            <li><a href="/movimento" th:text="#{moviment}"></a></li>
         </ul>
     </div>
 
@@ -71,7 +71,7 @@
     </select>
 
     <select name="patioId" class="select select-bordered">
-        <option value="" th:text="#{allof} + ' ' +#{plate}"></option>
+        <option value="" th:text="#{allof} + ' ' +#{patio}"></option>
         <option th:each="p : ${patios}" th:value="${p.idPatio}" th:text="${p.nome}"></option>
     </select>
 
@@ -89,36 +89,32 @@
 
 <div class="overflow-x-auto">
     <table class="table table-zebra">
-        <thead>
-        <tr>
-            <th th:text="#{user}"></th>
-            <th th:text="#{datevent}"></th>
-            <th th:text="#{plate}"></th>
-            <th th:text="#{model}"></th>
-            <th th:text="#{patio}"></th>
-            <th th:text="#{reader}"></th>
-            <th th:text="#{movimentype}"></th>
-            <th>  </th>
-            <th>  </th>
-        </tr>
-        </thead>
         <tbody>
-        <tr th:each="movimentacaoDocument : ${movimentacaoDocuments}">
+        <tr th:each="movimentacaoDocument : ${movimentoPage.content}">
             <td>
-                <div th:if="${movimentacaoDocument.user != null}" class="w-10 rounded-full">
-                    <img class="w-10 h-10 rounded-full object-cover" alt="avatar do usuário" th:src="${movimentacaoDocument.user.avatarUrl}" />
-                </div>
-                <span th:if="${movimentacaoDocument.user == null}">-</span>
+                <span th:text="${movimentacaoDocument.nomeUsuario ?: '-'}"></span>
             </td>
-            <td th:text="${movimentacaoDocument.dataEvento}"></td>
-            <td th:text="${movimentacaoDocument.moto?.placa}"></td>
-            <td th:text="${movimentacaoDocument.moto?.modelo}"></td>
-            <td th:text="${movimentacaoDocument.patio?.nome}"></td>
-            <td th:text="${movimentacaoDocument.leitor != null ? movimentacaoDocument.leitor.nome : '—'}"></td>
+            <td th:text="${#temporals.format(movimentacaoDocument.dataEvento, 'dd/MM/yyyy')}"></td>
+            <td th:text="${movimentacaoDocument.placaMoto}"></td>
+            <td th:text="${movimentacaoDocument.modeloMoto}"></td>
+            <td th:text="${movimentacaoDocument.nomePatio}"></td>
+            <td th:text="${movimentacaoDocument.nomeLeitor ?: '—'}"></td>
             <td th:text="${movimentacaoDocument.tipoMovimento}"></td>
         </tr>
         </tbody>
     </table>
+</div>
+
+<div class="join m-4 flex justify-center" th:if="${movimentoPage.totalPages > 1}">
+    <a th:href="@{/movimento(page=${movimentoPage.number - 1}, size=${movimentoPage.size}, placa=${param.placa}, modelo=${param.modelo}, data=${param.data}, tipo=${param.tipo}, patioId=${param.patioId}, leitorId=${param.leitorId})}"
+       th:classappend="${movimentoPage.first} ? 'btn-disabled'"
+       class="join-item btn">«</a>
+
+    <button class="join-item btn" th:text="${movimentoPage.number + 1}"></button>
+
+    <a th:href="@{/movimento(page=${movimentoPage.number + 1}, size=${movimentoPage.size}, placa=${param.placa}, modelo=${param.modelo}, data=${param.data}, tipo=${param.tipo}, patioId=${param.patioId}, leitorId=${param.leitorId})}"
+       th:classappend="${movimentoPage.last} ? 'btn-disabled'"
+       class="join-item btn">»</a>
 </div>
 
 

@@ -17,6 +17,7 @@ import net.minidev.json.annotate.JsonIgnore;
 @AllArgsConstructor
 public class Leitor {
     @Id
+    @Column(name = "id_leitor")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idLeitor;
 
@@ -29,5 +30,6 @@ public class Leitor {
 
     @ManyToOne
     @JsonIgnore
+    @JoinColumn(name = "id_patio")
     private Patio patio;
 }

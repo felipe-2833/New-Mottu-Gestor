@@ -13,4 +13,9 @@ public interface MovimentacaoDocumentRepository extends MongoRepository<Moviment
     List<MovimentacaoDocument> findByModeloMotoContainingIgnoreCase(String modelo);
     void deleteAllByIdMotoOracle(Long idMotoOracle);
 
+    List<MovimentacaoDocument> findByNomePatio(String nomePatio);
+
+    List<MovimentacaoDocument> findTop5ByNomePatioOrderByDataEventoDescIdDesc(String nomePatio);
+
+    List<MovimentacaoDocument> findByNomeLeitor(String nomeLeitor);
 }

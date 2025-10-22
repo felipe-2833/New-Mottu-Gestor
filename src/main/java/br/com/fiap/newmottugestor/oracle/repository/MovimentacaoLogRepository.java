@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MovimentacaoLogRepository extends JpaRepository<MovimentacaoLog, Long> {
     @Transactional
-    void deleteByMotoId(Long motoId);
+    void deleteByMoto_IdMoto(Long motoId);
 }

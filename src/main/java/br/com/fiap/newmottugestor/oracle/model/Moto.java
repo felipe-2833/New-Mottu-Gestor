@@ -20,6 +20,7 @@ public class Moto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_moto")
     private Long idMoto;
 
     @NotBlank(message = "{moto.placa.notblank}")
@@ -30,6 +31,7 @@ public class Moto {
     private String modelo;
 
     @NotBlank(message = "{moto.rfid.notblank}")
+    @Column(name = "rfid_tag")
     private String rfid_tag;
 
     @Column(name = "data_cadastro")
@@ -37,9 +39,12 @@ public class Moto {
     private LocalDate dataCadastro;
 
     @NotBlank(message = "{moto.servico.notblank}")
+    @Lob
+    @Column(name = "servico")
     private String servico;
 
     @ManyToOne
     @JsonIgnore
+    @JoinColumn(name = "id_leitor")
     private Leitor leitor;
 }
