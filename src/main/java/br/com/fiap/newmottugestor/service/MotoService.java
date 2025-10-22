@@ -69,6 +69,17 @@ public class MotoService {
         return motoRepository.findByLeitor(leitor);
     }
 
+    public int obterContagemMotosPorPatio(Long idPatio) {
+        if (idPatio == null) {
+            return 0;
+        }
+        Integer contagem = motoRepository.contarMotosPorPatio(idPatio);
+        if (contagem == null || contagem < 0) {
+            return 0;
+        }
+         return contagem;
+    }
+
 
     public Moto getMoto(Long id) {
         return motoRepository.findById(id).orElseThrow(

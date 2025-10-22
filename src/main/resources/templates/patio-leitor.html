@@ -176,12 +176,12 @@
     const msgTotalMotos = /*[[#{moto.total}]]*/ ' ';
     const msgTotalEntradas = /*[[#{mov.checkin}]]*/ ' ';
     const msgTotalSaidas = /*[[#{mov.exit}]]*/' ';
-    const totalMotos = motos.length;
+    const contagemRealMotos = /*[[${totalMotosNoPatio}]]*/ 0;
     const hoje = new Date();
     const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
     const ultimoDiaMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
 
-    document.getElementById('total-motos').textContent = msgTotalMotos + totalMotos;
+    document.getElementById('total-motos').textContent = msgTotalMotos + contagemRealMotos;
 
     const counts = motos.reduce((acc, m) => {
         acc[m.modelo] = (acc[m.modelo] || 0) + 1;

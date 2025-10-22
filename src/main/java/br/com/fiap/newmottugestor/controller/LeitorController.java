@@ -34,18 +34,25 @@ public class LeitorController {
 
     @GetMapping
     public String index(@RequestParam(required = false) Long patioId, Model model, @AuthenticationPrincipal OAuth2User user) {
+
+        int contagemTotalMotosPatio = 0;
+
         if (patioId != null) {
             Patio patio = patioService.getPatio(patioId);
             List<Leitor> leitores = leitorService.getLeitorsByPatio(patioId);
             List<MovimentacaoDocument> ultimosMovimentacaoDocuments = movimentoService.getUltimosMovimentosPorPatio(patioId);
             List<MovimentacaoDocument> movimentosPatio = movimentoService.getMovimentosByPatio(patioId);
 
+            contagemTotalMotosPatio = motoService.obterContagemMotosPorPatio(patioId);
+
             model.addAttribute("movimentosPatio", movimentosPatio);
             model.addAttribute("ultimosMovimentos", ultimosMovimentacaoDocuments);
             model.addAttribute("leitores", leitores);
             model.addAttribute("patioSelecionado", patio);
+            model.addAttribute("totalMotosNoPatio", contagemTotalMotosPatio);
         } else {
             model.addAttribute("leitores", leitorService.getAllLeitor());
+            model.addAttribute("totalMotosNoPatio", 0);
         }
         List<Moto> motos = motoService.getMotosByPatio(patioId);
 

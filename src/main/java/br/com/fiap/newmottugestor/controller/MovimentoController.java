@@ -84,7 +84,7 @@ public class MovimentoController {
         Leitor leitorAtual = moto.getLeitor();
         Patio patioAtual = leitorAtual.getPatio();
 
-        movimentoService.registrarNovaMovimentacao(
+        moto = movimentoService.registrarNovaMovimentacao(
                 moto.getIdMoto(),
                 user.getId(),
                 patioAtual.getIdPatio(),

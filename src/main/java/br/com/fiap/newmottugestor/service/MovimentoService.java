@@ -5,6 +5,7 @@ import br.com.fiap.newmottugestor.mongo.model.MovimentacaoDocument;
 import br.com.fiap.newmottugestor.mongo.repository.MovimentacaoDocumentRepository;
 import br.com.fiap.newmottugestor.oracle.model.*;
 import br.com.fiap.newmottugestor.oracle.repository.*;
+import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,11 @@ public class MovimentoService {
     @Autowired
     private TipoMovimentacaoRepository tipoMovRepo;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @Transactional
-    public void registrarNovaMovimentacao(Long idMoto, Long idUsuario, Long idPatio, Long idLeitor, TipoMovimento tipoMov) {
+    public Moto registrarNovaMovimentacao(Long idMoto, Long idUsuario, Long idPatio, Long idLeitor, TipoMovimento tipoMov) {
 
         Moto moto = motoRepo.findById(idMoto).orElseThrow(() -> new RuntimeException("Moto não encontrada"));
         User user = userRepo.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -85,9 +89,25 @@ public class MovimentoService {
                 .tipoMovimentacao(tipo)
                 .build();
 
+        if (tipoMov == TipoMovimento.MANUTENCAO) {
+            motoRepo.atualizarServicoMoto(idMoto, "Manutenção");
+            entityManager.flush();
+            entityManager.refresh(moto);
+        } else if (tipoMov == TipoMovimento.VISTORIA) {
+            motoRepo.atualizarServicoMoto(idMoto, "Vistoria");
+            entityManager.flush();
+            entityManager.refresh(moto);
+        }
+        else {
+            motoRepo.atualizarServicoMoto(idMoto, "Em aguardo...");
+            entityManager.flush();
+            entityManager.refresh(moto);
+        }
+
         logRepo.save(log);
 
         System.out.println("MOVIMENTAÇÃO REGISTRADA COM SUCESSO! ID Mongo: " + idMongo);
+        return moto;
     }
     public Page<MovimentacaoDocument> buscarComFiltros(Long patioId, Long leitorId, TipoMovimento tipo,
                                                        LocalDate data, String modelo, String placa,
