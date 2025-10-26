@@ -1,9 +1,18 @@
-FROM eclipse-temurin:17-jdk-jammy
+FROM gradle:8-jdk17-jammy AS build
+WORKDIR /app
 
-ARG JAR_FILE=build/libs/*.jar
+COPY build.gradle settings.gradle gradlew ./
+COPY gradle gradle
 
-COPY ${JAR_FILE} app.jar
+COPY src src
 
-EXPOSE 8080
+RUN ./gradlew bootJar --no-daemon --build-cache 
 
-ENTRYPOINT ["java", "-jar", "/app.jar", "--server.port=${PORT:8080}"]
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+
+COPY --from=build /app/build/libs/*.jar app.jar
+
+EXPOSE 8080 
+
+ENTRYPOINT ["java", "-jar", "/app.jar"] 
